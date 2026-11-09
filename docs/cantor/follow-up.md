@@ -50,3 +50,22 @@ quality. This is user listening feedback, not a formal blind evaluation.
 - Upstream recording covers use transcription to ABC then regeneration;
   native support exists, but the Cantor audio-input path is not integrated.
   Built-in automatic lyric writing is not documented for YuE2.
+
+## 2026-11-09 23:18 UTC — resumed CPU session and native checks
+
+- User explicitly requested another restart. Prior CPU session was absent;
+  restarted as `sb-01M7197YE2XRAKHFB7WXES6JAF`, 2 CPU/2 GiB RAM, no GPU.
+  Enforced deadline: **2026-11-10 02:10:03 UTC**. Local receipt:
+  `cpu-session.json`.
+- R2 BF16 upload survived; its complete public body and HTTP byte-range probe
+  passed. Other files continue sequentially. Remote durable log/receipt remain
+  under `r2-mirror-08`; existing objects are checked and reused, never replaced.
+- GitHub confirmed ARM Mac runner capacity shortages for the previous queued
+  jobs. A subsequent run acquired runners and **both macOS ARM64 CPU and Metal
+  passed**, including relocated loads. Windows CPU and Linux ARM64 CPU also
+  passed. Final native source: `d43af5015d85a25bf4108ef3e8423f91f46599b0`;
+  run https://github.com/ckadirt/yue2.cpp/actions/runs/42718837537.
+- Fixed macOS MODULE `.so` packaging, source dirtiness caused by the generated
+  Vulkan SDK folder, and macOS's exported static yyjson symbols (ABI-only export
+  list). Linux implementation/numerics remain unchanged. Documentation-only
+  pushes no longer trigger the entire matrix.
