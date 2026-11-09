@@ -31,6 +31,6 @@ base.ggml_backend_free.argtypes = [C.c_void_p]
 base.ggml_backend_free(cpu)
 if sys.argv[3] != "cpu":
     plugin = {"cuda12": "cuda", "metal": "metal", "vulkan": "vulkan"}[sys.argv[3]]
-    filename = {"win32": f"ggml-{plugin}.dll", "darwin": f"libggml-{plugin}.dylib"}.get(sys.platform, f"libggml-{plugin}.so")
+    filename = {"win32": f"ggml-{plugin}.dll", "darwin": f"libggml-{plugin}.so"}.get(sys.platform, f"libggml-{plugin}.so")
     C.CDLL(str(root / filename))
 print("Relocated ABI, CPU dispatch, and selected plugin load passed")

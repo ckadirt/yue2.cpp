@@ -47,12 +47,14 @@ def main():
     prefix, suffix = ("", ".dll") if windows else ("lib", "*.dylib")
     files = [build / name]
     for stem in ["ggml-yue2", "ggml-base-yue2", "ggml-cpu*"]:
-        matches = sorted(build.glob((prefix + stem + suffix).replace("**", "*")))
+        patterns = [prefix + stem + suffix] if windows else [prefix + stem + '*.dylib', prefix + stem + '.so*']
+        matches = sorted({f for pattern in patterns for f in build.glob(pattern.replace("**", "*"))})
         if not matches:
             parser.error(f"Missing {stem} library")
         files += matches
     if args.backend != "cpu":
-        matches = sorted(build.glob(prefix + "ggml-" + args.backend + suffix))
+        plugin_suffix = '.dll' if windows else '.so'
+        matches = sorted(build.glob(prefix + "ggml-" + args.backend + plugin_suffix))
         if not matches:
             parser.error(f"Missing {args.backend} plugin")
         files += matches
@@ -75,14 +77,24 @@ def main():
                         raise RuntimeError(f"Missing {dependency}")
         else:
             names = [line.split()[-1].removeprefix("_") for line in output("nm", "-gU", str(root / name)).splitlines() if line.split()]
-            for f in root.glob("*.dylib"):
-                needed = [line.strip().split(" (", 1)[0] for line in output("otool", "-L", str(f)).splitlines()[2:]]
-                dependencies[f.name] = needed
+            for f in [*root.glob("*.dylib"), *root.glob("*.so")]:
+                if f.suffix == '.dylib':
+                    subprocess.run(['install_name_tool', '-id', '@rpath/' + f.name, str(f)], check=True)
+                needed = [line.strip().split(" (", 1)[0] for line in output("otool", "-L", str(f)).splitlines()[1:]]
+                dependencies[f.name] = []
                 for dependency in needed:
-                    if dependency.startswith(("/usr/lib/", "/System/Library/")):
+                    if Path(dependency).name == f.name:
                         continue
-                    if not dependency.startswith(("@rpath/", "@loader_path/")) or not (root / Path(dependency).name).is_file():
-                        raise RuntimeError(f"Unbundled dependency {dependency}")
+                    if (root / Path(dependency).name).is_file():
+                        replacement = '@loader_path/' + Path(dependency).name
+                        subprocess.run(['install_name_tool', '-change', dependency, replacement, str(f)], check=True)
+                        dependencies[f.name].append(replacement)
+                        continue
+                    if dependency.startswith(("/usr/lib/", "/System/Library/")):
+                        dependencies[f.name].append(dependency)
+                        continue
+                    raise RuntimeError(f"Unbundled dependency {dependency}")
+                subprocess.run(['codesign', '--force', '--sign', '-', str(f)], check=True)
         if not names or any(not n.startswith("cantor_engine_") for n in names):
             raise RuntimeError(f"Unexpected engine exports: {names}")
         env = dict(os.environ)

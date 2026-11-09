@@ -58,7 +58,7 @@ jobs:
         run: >-
           cmake -S . -B build-cantor -DCMAKE_BUILD_TYPE=Release
           -DGGML_BACKEND_DL=ON -DGGML_NATIVE=OFF -DGGML_OPENMP=OFF
-          -DGGML_METAL=OFF -DGGML_ACCELERATE=OFF
+          -DGGML_METAL=OFF -DGGML_BLAS=OFF
           '-DCMAKE_PREFIX_PATH=${{ runner.temp }}/spirv' ${{ matrix.flags }}
       - name: Build and test the actual C ABI
         shell: bash

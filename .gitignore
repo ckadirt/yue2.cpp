@@ -1,6 +1,7 @@
 build/
 build-*/
 dist/
+/VULKAN_SDK/
 artifacts/
 *.wav
 
