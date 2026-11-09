@@ -6,6 +6,8 @@ Validated Linux x86_64 CPU/CUDA binaries are built from `25455ed8a916`.
 - [Selected presets and timings](presets.md)
 - [Validation, artifacts, and limitations](validation.md)
 - [Delivery audit and remaining gaps](delivery-audit.md)
+- [Current distribution follow-up](follow-up.md)
+- [Native platform delivery](platforms.md)
 - [Native ABI contract](ABI.md)
 - [Implementation plan](plan.md)
 - [Recovery log](work-log.md)
@@ -31,4 +33,5 @@ Registration: https://github.com/ckadirt/Cantor/pull/5.
 
 For this local multi-repo workspace, visible WAV copies and an HTML player
 are also at `../audio-samples/yue2/` relative to the repository root.
-R2 currently hosts engine archives only; GGUF weight URLs still use Hugging Face.
+All five evaluated generation GGUFs and source notices are now mirrored under
+`https://ckpts.cantorfm.com/yue2-1.0/`; the catalog switch is in Cantor PR #6.

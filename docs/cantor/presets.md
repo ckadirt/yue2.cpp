@@ -11,6 +11,11 @@ retains useful quality. "Speed" needs timing evidence, not just a smaller file.
 Source: [Serveurperso/YuE2-GGUF](https://huggingface.co/Serveurperso/YuE2-GGUF),
 revision `e630f2b8f6aedf8254c3186438633c1b5eeaf80a`.
 
+All five evaluated generation GGUFs are now mirrored under
+`https://ckpts.cantorfm.com/yue2-1.0/`, preserving their exact identities and
+source notices. [Public source/hash manifest](https://ckpts.cantorfm.com/yue2-1.0/manifest.json).
+The catalog URL change is in [PR #6](https://github.com/ckadirt/Cantor/pull/6).
+
 | Component | Existing choices | Notes |
 |---|---|---|
 | MoT backbone, including both AR and NAR | BF16, Q8_0, Q6_K, Q5_K_M | One file controls both experts in this packaging |
@@ -64,7 +69,9 @@ The full planned-song Q5 render at 16 steps differed from its identical
 (6.74 s end to end), but changed that waveform by **0.13647**, exceeding the
 0.1 numerical tolerance used for this preset decision. Eight remains an
 optional control; 16 is the speed default. This tolerance is an engineering
-proxy, not a perceptual-quality guarantee. No human listening is claimed.
+proxy, not a perceptual-quality guarantee. The user subsequently listened to
+English, Spanish, and instrumental samples and reported positive sound quality;
+this was not a formal blind evaluation.
 
 English, Spanish and empty-lyrics instrumental clips were retained for each
 selected recipe. Six-minute supplied-code capacity checks passed on A10G;

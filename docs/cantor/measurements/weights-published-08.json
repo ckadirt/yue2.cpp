@@ -1,0 +1,56 @@
+{
+  "source": "Serveurperso/YuE2-GGUF",
+  "revision": "e630f2b8f6aedf8254c3186438633c1b5eeaf80a",
+  "checked_utc": "2026-11-09T23:27:31.859290+00:00",
+  "files": [
+    {
+      "file": "YuE2-3B-BF16.gguf",
+      "url": "https://ckpts.cantorfm.com/yue2-1.0/YuE2-3B-BF16.gguf",
+      "bytes": 7166072352,
+      "sha256": "668ca9ffa4622449916aae5068b5737363e7ec186a824cd3d7a1a8a95269f166",
+      "public_verified": true
+    },
+    {
+      "file": "YuE2-3B-Q8_0.gguf",
+      "url": "https://ckpts.cantorfm.com/yue2-1.0/YuE2-3B-Q8_0.gguf",
+      "bytes": 3810232064,
+      "sha256": "41121ce97786d7795a325bcf123ca196956c03bb252c9e75384cfc1f2fc19e6b",
+      "public_verified": true
+    },
+    {
+      "file": "YuE2-3B-Q6_K.gguf",
+      "url": "https://ckpts.cantorfm.com/yue2-1.0/YuE2-3B-Q6_K.gguf",
+      "bytes": 2943331072,
+      "sha256": "42068d5e57713df11b9f6a5a3751072d9bbefe231d1d088f9c100e026ffa4ef9",
+      "public_verified": true
+    },
+    {
+      "file": "YuE2-3B-Q5_K_M.gguf",
+      "url": "https://ckpts.cantorfm.com/yue2-1.0/YuE2-3B-Q5_K_M.gguf",
+      "bytes": 2622936832,
+      "sha256": "cd3efd250b734a229172800f08f33a893ad1f66b521666e176cdae4a0729b281",
+      "public_verified": true
+    },
+    {
+      "file": "YuE2-Vae-F32.gguf",
+      "url": "https://ckpts.cantorfm.com/yue2-1.0/YuE2-Vae-F32.gguf",
+      "bytes": 530497344,
+      "sha256": "93e49dfb1970e89ad64cacb17cf13b5d05f6bb30ef7ed3adae3050bcb728638a",
+      "public_verified": true
+    },
+    {
+      "file": "LICENSE",
+      "url": "https://ckpts.cantorfm.com/yue2-1.0/LICENSE",
+      "bytes": 20309,
+      "sha256": "060985741d20e70613b4c189c7de106cabd3fb2109fbbfb6d705c9d619417dd0",
+      "public_verified": true
+    },
+    {
+      "file": "README.md",
+      "url": "https://ckpts.cantorfm.com/yue2-1.0/README.md",
+      "bytes": 10678,
+      "sha256": "a774688993232a6a4456640091ea31acae907f6596de42cb6cc7ccedcacf5551",
+      "public_verified": true
+    }
+  ]
+}

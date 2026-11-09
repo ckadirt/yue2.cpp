@@ -8,7 +8,9 @@ Full logs, private stage blobs, requests, and PCM are retained under
 `/cantor/validation/yue2`. A local evidence snapshot is in
 `yue2.cpp/artifacts/release-25455ed8a916/evidence/`. Private test-node keys and
 configuration were excluded from that snapshot. No human listening judgment
-is claimed.
+is claimed by the agent. The user subsequently listened to English, Spanish,
+and instrumental samples and reported positive sound quality; this is recorded
+as user feedback, not a formal blind evaluation.
 
 ## Fixed-control precision comparison
 
@@ -137,10 +139,15 @@ test setup, not counted as an engine failure or a pass.
 
 Both public bodies matched the complete accepted SHA-256 hashes. Conditional
 R2 writes created new immutable keys; existing assets were not replaced.
-Weights stay at the pinned public upstream revision, with their original
-CC-BY-NC-4.0 terms. Existing quantizations were reused. **Weights were not
-mirrored to R2**; this remains a distribution gap for avoiding Hugging Face
-download limits. R2 publication covered the engine binaries only.
+Weights retain their pinned public upstream identities and original
+CC-BY-NC-4.0 terms. Existing quantizations were reused. The authorized follow-up
+mirrored **all five evaluated generation GGUFs** to
+`https://ckpts.cantorfm.com/yue2-1.0/`, with source license/model-card notices and
+a provenance manifest. Complete public bodies and HTTP byte-range probes
+passed. [Weight publication receipt](measurements/weights-published-08.json).
+The catalog switch and additional validated native engine registrations are
+in [PR #6](https://github.com/ckadirt/Cantor/pull/6); see the
+[platform report](platforms.md) for OS coverage and host constraints.
 
 The catalog exposes steps, guidance, and automatic score mode. Supplied ABC
 remains a native-API feature: the current shared app text-extension contract

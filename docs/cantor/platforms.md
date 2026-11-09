@@ -1,0 +1,56 @@
+# Native engine platform delivery
+
+This follow-up adds native build/ABI/package checks and public engine archives.
+It does not claim model generation on every OS or accelerator. Existing A10G
+generation and Linux CPU short-generation evidence remains in [validation](validation.md).
+
+| Platform/backend | Build, ABI, checkpoint and relocation result | Distribution |
+|---|---|---|
+| Linux x86_64 CPU | Passed | Existing generation-checked `25455ed8a916` stays in catalog |
+| Linux x86_64 CUDA 12 | Existing archive generation-tested on A10G; new hosted CI build in progress | Existing `25455ed8a916` stays in catalog |
+| Linux ARM64 CPU | Passed on native ARM runner | R2 `d43af5015d85`; proposed in PR #6 |
+| Linux x86_64 Vulkan | Passed | R2 `7fd3f2455e86`; proposed in PR #6 |
+| macOS Intel CPU | Passed on native Intel runner | R2 `d43af5015d85`; proposed in PR #6 |
+| macOS Apple Silicon CPU | Passed on native ARM runner | R2 `d43af5015d85`; proposed in PR #6 |
+| macOS Apple Silicon Metal | Passed, including selected plugin load | R2 `d43af5015d85`; proposed in PR #6 |
+| Windows x86_64 CPU | Passed, including DLL relocation and CPU dispatch | R2 `d43af5015d85`; engine archive only |
+| Windows x86_64 Vulkan | Build and ABI passed; loader prerequisite corrected in CI, rerun pending | Not published until relocation check passes |
+
+Receipts: [initial platform acceptance](measurements/platforms-acceptance-09.json),
+[six public archives](measurements/platforms-published-09.json),
+[Linux Vulkan publication](measurements/vulkan-published-10.json).
+
+The original catalog's Linux CPU/CUDA archives remain pinned to the builds
+that were exercised with real model generation. Additional targets were built
+and tested by native GitHub runners. Metal/Vulkan/CUDA plugin presence and
+library loading do not establish song generation or performance on a GPU.
+
+## Host constraints left explicit
+
+- Released macOS nodes read a GitHub-release-specific backend manifest by
+  default. The shared manifest in PR #6 contains the new macOS engines;
+  operators can select it through the existing setting
+  `backends_url = "https://relay.cantorfm.com/backends/v1.json"`. Default
+  release-manifest wiring was not changed under this model task.
+- A Windows native engine DLL is not a Windows node release. Cantor's current
+  node has no Windows DLL-loading path. Windows engine artifacts are available
+  for development, but Windows is not advertised in the shared Cantor manifest.
+- Windows Vulkan requires `vulkan-1.dll`, normally supplied by graphics-driver
+  Vulkan Runtime installation. The CI environment now supplies the official
+  LunarG 1.4.309.0 components with verified SHA-256
+  `7d969f4d7b44e387667d3148f61559497c22d50cbe3d50adc9e5409afbce2df1`.
+  This is a CI prerequisite, not a bundled driver or a Cantor node change.
+
+## Reproducing and releasing
+
+`.github/workflows/cantor.yml` in the fork builds native targets on push/PR
+and by manual dispatch. It runs the actual C ABI/checkpoint tests, audits
+exports/dependencies, packages normal files (no archive symlinks), and loads
+the relocated archive libraries in a fresh process. Per-file receipts contain
+OS, architecture, backend, source commit, dependency names, size and SHA-256.
+
+Manual dispatch with `publish_release=true` publishes an immutable full-commit
+GitHub release only after all jobs pass. Existing release assets are never
+clobbered. `tools/cantor/fetch_platform_artifacts.py` recovers only packages
+whose native CI job passed; `publish_backends.py` preserves conditional
+no-overwrite R2 publication with complete public-body verification.

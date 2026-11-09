@@ -1,5 +1,13 @@
 # YuE2 delivery audit
 
+This is the initial audit snapshot. The user subsequently authorized R2 weight
+mirroring and broader native platform CI. See the current
+[follow-up](follow-up.md), [platform report](platforms.md), and
+[successful weight publication receipt](measurements/weights-published-08.json)
+for resolved distribution/CI items. The user accepted native sampling
+differences, VRAM reservations, and the existing system-RAM measurement scope,
+and reported positive English/Spanish/instrumental listening feedback.
+
 Checked 2026-11-09 against source, local raw evidence, GitHub CI, and the live
 catalog/backend manifests. This audit makes the boundary of the delivered
 integration explicit. The earlier completion summary was too broad if read
@@ -34,8 +42,8 @@ public-download end-to-end testing.
 - Node test implementation: `verify_node.py`; raw logs and result are at
   `yue2.cpp/artifacts/release-25455ed8a916/evidence/node-release-04/`.
   Its result records `relay: loopback only` and reused immutable model bytes.
-- Local samples: workspace `audio-samples/yue2/README.md` and
-  `audio-samples/yue2/index.html` (a sibling of this repository).
+- [Local samples](../../audio-samples/yue2/README.md),
+  [local audio player](../../audio-samples/yue2/index.html).
 
 ## Remaining work for the broader release described by the user
 
