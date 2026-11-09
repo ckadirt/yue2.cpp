@@ -78,6 +78,29 @@ Yue2Request parse_request(const uint8_t * bytes, size_t size) {
     for (const char * key : {"steps", "inference_steps", "seed", "lm_seed", "lm_batch_size", "synth_batch_size", "top_k"}) {
         auto * v = yyjson_obj_get(root, key);
         require(!v || yyjson_is_int(v), "integer request field has the wrong type");
+        if (v) {
+            bool seed = !std::strcmp(key, "seed") || !std::strcmp(key, "lm_seed");
+            require(!yyjson_is_uint(v) || yyjson_get_uint(v) <= uint64_t(seed ? INT64_MAX : INT32_MAX),
+                    "integer request field overflows its supported range");
+            require(yyjson_get_sint(v) >= (seed ? -1 : INT32_MIN) &&
+                    (seed || yyjson_get_sint(v) <= INT32_MAX), "integer request field outside supported range");
+        }
+    }
+    for (const char * key : {"abc_sampling", "semantic_sampling"}) {
+        auto * sampling = yyjson_obj_get(root, key);
+        require(!sampling || yyjson_is_obj(sampling), "sampling settings must be objects");
+        if (!sampling) continue;
+        for (const char * field : {"top_k", "penalty_window", "min_tokens", "max_tokens"}) {
+            auto * v = yyjson_obj_get(sampling, field);
+            require(!v || (yyjson_is_int(v) &&
+                (!yyjson_is_uint(v) || yyjson_get_uint(v) <= uint64_t(INT32_MAX)) &&
+                yyjson_get_sint(v) >= INT32_MIN && yyjson_get_sint(v) <= INT32_MAX), "sampling integer outside supported range");
+        }
+        for (const char * field : {"temperature", "top_p", "repetition_penalty"}) {
+            auto * v = yyjson_obj_get(sampling, field);
+            require(!v || (yyjson_is_num(v) && std::isfinite(static_cast<float>(yyjson_get_num(v)))),
+                    "sampling values must be finite numbers");
+        }
     }
     for (const char * key : {"duration", "cfg_scale", "guidance_scale"}) {
         auto * v = yyjson_obj_get(root, key);

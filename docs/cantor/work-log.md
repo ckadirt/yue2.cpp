@@ -183,3 +183,24 @@
 - CPU rebuild and both tests passed after these changes. Next: commit/sync,
   rebuild only the adapter, rerun clean greedy and stochastic GPU smoke,
   then run numeric reference and preset comparisons on an otherwise idle GPU.
+
+## 2026-11-09 — clean context-recreation checks passed
+
+- Commit **`a16b4ec`** pushed to the fork and rebuilt on A10G.
+- Clean greedy smoke **passed**, with no callback errors:
+  `/cantor/validation/yue2/smoke-q8-02/smoke-results.json`.
+- Clean stochastic smoke **passed**, exercising the sampler cursor:
+  `/cantor/validation/yue2/smoke-q8-stochastic-01/smoke-results.json`.
+- Both checked byte-identical completed CODES/DIFFUSE envelopes after context
+  recreation, exact decoded PCM after decode retry, equivalence between
+  evicted and retained weights, and changed output on a changed request.
+  These were 25-frame, 2-step short checks, not song-quality benchmarks.
+- Expanded the harness to resume in a **fresh interpreter process**, test a
+  longer stream/cache boundary, and accept full planning mode. Those expanded
+  tests have not run yet.
+- Hardened request integers against narrowing overflow and non-finite nested
+  sampling values; added invalid-input cases. Cantor omits absent optional
+  fields and its app seed bound is below the native signed-64-bit limit.
+- CPU tests still pass. Next: commit/sync these focused changes, run fresh-
+  process long/planning checks, then equal-control precision and reference
+  comparisons. Do not publish preset claims before those measurements.

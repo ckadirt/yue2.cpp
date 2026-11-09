@@ -63,6 +63,9 @@ def main():
         row = {"cold": cold, "warm": warm,
                "warm_pipeline_seconds_mean": float(np.mean([x["pipeline_seconds"] for x in warm])),
                "fixed_semantic": acoustic}
+        identity = json.loads((directory / "cold/generation-status.json").read_text())
+        if identity["lm"] != manifest["files"][model.name]["sha256"] or identity["vae"] != manifest["files"]["YuE2-Vae-F32.gguf"]["sha256"]:
+            raise AssertionError("Engine component hashes differ from the verified source manifest")
         if quant != "BF16":
             ref = args.output / "BF16/fixed-semantic"
             row["fixed_semantic_latent_difference"] = metrics(np.load(ref / "latents.npy"), np.load(directory / "fixed-semantic/latents.npy"))

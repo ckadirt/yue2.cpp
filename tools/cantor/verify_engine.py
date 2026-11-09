@@ -7,6 +7,7 @@ import os
 from pathlib import Path
 import struct
 import subprocess
+import sys
 import threading
 import time
 import wave
@@ -178,8 +179,9 @@ def run(engine, request, directory):
 
 def smoke(args):
     request = {"caption": "English, warm piano pop, clear lead vocal", "lyrics": "[Verse]\nHello morning light",
-               "cot": "off", "duration": 1.0, "seed": 42, "inference_steps": 2,
-               "semantic_sampling": {"temperature": 1 if args.stochastic else 0, "min_tokens": 25, "max_tokens": 25}}
+               "cot": args.cot, "duration": args.frames / 25, "seed": 42, "inference_steps": 2,
+               "semantic_sampling": {"temperature": 1 if args.stochastic else 0,
+                                     "min_tokens": args.frames, "max_tokens": args.frames}}
     make = lambda keep=False: Engine(args.library, args.model, args.vae, keep, tile=16)
     engine = make()
     try:
@@ -187,7 +189,7 @@ def smoke(args):
     finally:
         engine.close()
     checks = {}
-    for stage, source, cancel_at in [(2, json.dumps(request).encode(), 5),
+    for stage, source, cancel_at in [(2, json.dumps(request).encode(), args.pause_token),
         (3, (args.output / "baseline/codes.bin").read_bytes(), 1),
         (4, (args.output / "baseline/latents.bin").read_bytes(), 1)]:
         engine = make()
@@ -200,21 +202,24 @@ def smoke(args):
             (args.output / f"paused-{stage}.bin").write_bytes(checkpoint)
         finally:
             engine.close()
-        engine = make()
-        try:
-            status, output, resumed = engine.stage(stage, checkpoint if checkpoint else source)
-            if status != 0:
-                raise AssertionError(f"Stage {stage} did not finish on recreated context")
-            if stage < 4:
-                expected = (args.output / ("baseline/codes.bin" if stage == 2 else "baseline/latents.bin")).read_bytes()
-                equal = output == expected
-            else:
-                equal = np.array_equal(engine.audio(), np.load(args.output / "baseline/audio.npy"))
-            if not equal:
-                raise AssertionError(f"Stage {stage} restart differs from uninterrupted output")
-            checks[str(stage)] = {"equal": equal, "paused": paused, "resumed": resumed}
-        finally:
-            engine.close()
+        resume_input = args.output / f"resume-input-{stage}.bin"
+        resume_input.write_bytes(checkpoint if checkpoint else source)
+        resumed_dir = args.output / f"fresh-process-{stage}"
+        with (args.output / f"fresh-process-{stage}.log").open("w") as log:
+            subprocess.run([sys.executable, str(Path(__file__).resolve()),
+                "--library", str(args.library.resolve()), "--model", str(args.model.resolve()),
+                "--vae", str(args.vae.resolve()), "--output", str(resumed_dir.resolve()),
+                "--stage", str(stage), "--input", str(resume_input.resolve()), "--tile", "16"],
+                stdout=log, stderr=subprocess.STDOUT, check=True)
+        resumed = json.loads((resumed_dir / "result.json").read_text())
+        if stage < 4:
+            expected = (args.output / ("baseline/codes.bin" if stage == 2 else "baseline/latents.bin")).read_bytes()
+            equal = (resumed_dir / "output.bin").read_bytes() == expected
+        else:
+            equal = np.array_equal(np.load(resumed_dir / "audio.npy"), np.load(args.output / "baseline/audio.npy"))
+        if not equal:
+            raise AssertionError(f"Stage {stage} fresh-process restart differs from uninterrupted output")
+        checks[str(stage)] = {"equal": equal, "fresh_process": True, "paused": paused, "resumed": resumed}
     engine = make(keep=True)
     try:
         kept = run(engine, request, args.output / "kept-first")
@@ -241,12 +246,35 @@ def main():
     parser.add_argument("--request", type=Path)
     parser.add_argument("--smoke", action="store_true")
     parser.add_argument("--stochastic", action="store_true", help="Exercise absolute sampler positions in smoke checks")
+    parser.add_argument("--frames", type=int, default=25)
+    parser.add_argument("--pause-token", type=int, default=5)
+    parser.add_argument("--cot", choices=["off", "full", "melody"], default="off")
+    parser.add_argument("--stage", type=int, choices=[2, 3, 4])
+    parser.add_argument("--input", type=Path)
+    parser.add_argument("--tile", type=int, default=512)
     parser.add_argument("--keep-loaded", action="store_true")
     args = parser.parse_args()
     args.output.parent.mkdir(parents=True, exist_ok=True)
     if args.smoke:
+        if not 1 < args.frames <= 9000 or not 0 < args.pause_token < args.frames:
+            parser.error("smoke requires 1 < frames <= 9000 and 0 < pause-token < frames")
         args.output.mkdir(exist_ok=False)
         smoke(args)
+    elif args.stage:
+        if not args.input:
+            parser.error("--stage requires --input")
+        args.output.mkdir(parents=True, exist_ok=False)
+        engine = Engine(args.library, args.model, args.vae, args.keep_loaded, args.tile)
+        try:
+            status, output, receipt = engine.stage(args.stage, args.input.read_bytes())
+            if status != 0:
+                raise AssertionError("Resume did not complete")
+            (args.output / "output.bin").write_bytes(output)
+            if args.stage == 4:
+                write_audio(args.output, engine.audio())
+            (args.output / "result.json").write_text(json.dumps(receipt, indent=2) + "\n")
+        finally:
+            engine.close()
     else:
         if not args.request:
             parser.error("--request or --smoke is required")
