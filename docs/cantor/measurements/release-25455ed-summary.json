@@ -1,0 +1,355 @@
+{
+  "source_commit": "25455ed8a9164e4fced3e31ea5d239f99300890f",
+  "precision_matrix": {
+    "frames": 750,
+    "steps": 32,
+    "keep_loaded": true,
+    "variants": {
+      "BF16": {
+        "cold_seconds": 48.90663643200014,
+        "warm_seconds_mean": 10.21778948850033,
+        "warm_stage_seconds": [
+          [
+            5.636443042000337,
+            4.19760745099984,
+            0.37407049000012194
+          ],
+          [
+            5.635667491000277,
+            4.214856645000054,
+            0.37693385800002943
+          ]
+        ],
+        "warm_sampled_peak_mib": 12051,
+        "fixed_semantic_latents": null,
+        "fixed_semantic_wave": null,
+        "lm_logits": null
+      },
+      "Q8_0": {
+        "cold_seconds": 29.50022227000045,
+        "warm_seconds_mean": 8.780021978499917,
+        "warm_stage_seconds": [
+          [
+            3.8140585800001645,
+            4.583300507999866,
+            0.369152971999938
+          ],
+          [
+            3.820864958999664,
+            4.601456516000326,
+            0.3712104219998764
+          ]
+        ],
+        "warm_sampled_peak_mib": 8853,
+        "fixed_semantic_latents": {
+          "cosine": 0.9997885021773182,
+          "relative_l2": 0.02056592182447901,
+          "max_abs": 1.012553632259369
+        },
+        "fixed_semantic_wave": {
+          "cosine": 0.9995114024321022,
+          "relative_l2": 0.03125651078806858,
+          "max_abs": 0.3152379412204027
+        },
+        "lm_logits": {
+          "prefill": {
+            "cosine": 0.9999451488779617,
+            "relative_l2": 0.01780591909328519,
+            "max_abs": 0.5824337005615234,
+            "argmax_equal": true
+          },
+          "decode": {
+            "cosine": 0.9999541882076957,
+            "relative_l2": 0.011774837728093967,
+            "max_abs": 0.39549946784973145,
+            "argmax_equal": true
+          }
+        }
+      },
+      "Q6_K": {
+        "cold_seconds": 26.945930736000264,
+        "warm_seconds_mean": 8.685030088999838,
+        "warm_stage_seconds": [
+          [
+            3.2600004519999857,
+            5.032653776000188,
+            0.3786824170001637
+          ],
+          [
+            3.2852285079998182,
+            5.031680408999819,
+            0.38181461599970135
+          ]
+        ],
+        "warm_sampled_peak_mib": 8027,
+        "fixed_semantic_latents": {
+          "cosine": 0.9995620592037457,
+          "relative_l2": 0.029608536899868868,
+          "max_abs": 0.5347129702568054
+        },
+        "fixed_semantic_wave": {
+          "cosine": 0.9994204379087305,
+          "relative_l2": 0.034049917829827914,
+          "max_abs": 0.16985052824020386
+        },
+        "lm_logits": {
+          "prefill": {
+            "cosine": 0.9998212678067304,
+            "relative_l2": 0.01904382356499415,
+            "max_abs": 0.8678549826145172,
+            "argmax_equal": true
+          },
+          "decode": {
+            "cosine": 0.9997059455954356,
+            "relative_l2": 0.036823873645490245,
+            "max_abs": 0.938959002494812,
+            "argmax_equal": true
+          }
+        }
+      },
+      "Q5_K_M": {
+        "cold_seconds": 24.141232690999914,
+        "warm_seconds_mean": 8.271070466000083,
+        "warm_stage_seconds": [
+          [
+            3.0502700500001083,
+            4.837221606000185,
+            0.37516854899968166
+          ],
+          [
+            3.057571752000058,
+            4.844903219000116,
+            0.37700575600001685
+          ]
+        ],
+        "warm_sampled_peak_mib": 7721,
+        "fixed_semantic_latents": {
+          "cosine": 0.9988171118703196,
+          "relative_l2": 0.048685761288190986,
+          "max_abs": 1.0924838781356812
+        },
+        "fixed_semantic_wave": {
+          "cosine": 0.9978362419872611,
+          "relative_l2": 0.06575109703004628,
+          "max_abs": 0.3474054653197527
+        },
+        "lm_logits": {
+          "prefill": {
+            "cosine": 0.999384343117983,
+            "relative_l2": 0.03714941266141211,
+            "max_abs": 2.5468826293945312,
+            "argmax_equal": false
+          },
+          "decode": {
+            "cosine": 0.9990917240932081,
+            "relative_l2": 0.06140838752516035,
+            "max_abs": 2.189821243286133,
+            "argmax_equal": true
+          }
+        }
+      }
+    }
+  },
+  "presets": {
+    "quality": {
+      "quant": "BF16",
+      "vae": "F32",
+      "steps": 32,
+      "cold_seconds": 50.780812530000276,
+      "warm_seconds_mean": 13.90753774100017,
+      "realtime_factor": 0.46360519604205197,
+      "warm_stage_seconds": [
+        [
+          9.04327434600009,
+          4.532059981000202,
+          0.37002741800006334
+        ],
+        [
+          9.051740925000104,
+          4.446789582999827,
+          0.37118322900005296
+        ]
+      ],
+      "sampled_peak_mib": 12083
+    },
+    "balanced": {
+      "quant": "Q8_0",
+      "vae": "F32",
+      "steps": 32,
+      "cold_seconds": 32.25177829199947,
+      "warm_seconds_mean": 11.3948361810003,
+      "realtime_factor": 0.37984475468910733,
+      "warm_stage_seconds": [
+        [
+          6.202170524999929,
+          4.8002586180000435,
+          0.38250108000011096
+        ],
+        [
+          6.201034096000058,
+          4.822015562000161,
+          0.3816924810003002
+        ]
+      ],
+      "sampled_peak_mib": 8885
+    },
+    "speed": {
+      "quant": "Q5_K_M",
+      "vae": "F32",
+      "steps": 16,
+      "cold_seconds": 23.256064010000046,
+      "warm_seconds_mean": 8.022149514499688,
+      "realtime_factor": 0.26741686901083456,
+      "warm_stage_seconds": [
+        [
+          5.036487333999958,
+          2.59399094399987,
+          0.38703248100000565
+        ],
+        [
+          5.040000084999974,
+          2.6005240759996013,
+          0.386264108999967
+        ]
+      ],
+      "sampled_peak_mib": 7755
+    }
+  },
+  "step_sweeps": {
+    "Q8_0": {
+      "32": {
+        "warm_seconds_mean": 5.293170042500378,
+        "latent_difference_from_32": null,
+        "wave_difference_from_32": null
+      },
+      "16": {
+        "warm_seconds_mean": 2.8976254025001253,
+        "latent_difference_from_32": {
+          "cosine": 0.9998251635239249,
+          "relative_l2": 0.018699458257771657,
+          "max_abs": 0.951069563627243
+        },
+        "wave_difference_from_32": {
+          "cosine": 0.9995673503583367,
+          "relative_l2": 0.02951806007143904,
+          "max_abs": 0.29082976654171944
+        }
+      },
+      "8": {
+        "warm_seconds_mean": 1.8008161085001575,
+        "latent_difference_from_32": {
+          "cosine": 0.9994836770235096,
+          "relative_l2": 0.03216432486901902,
+          "max_abs": 0.7225749306380749
+        },
+        "wave_difference_from_32": {
+          "cosine": 0.9989205079106923,
+          "relative_l2": 0.04710659130816211,
+          "max_abs": 0.3698505088686943
+        }
+      }
+    },
+    "Q5_K_M": {
+      "32": {
+        "warm_seconds_mean": 5.5360603770000125,
+        "latent_difference_from_32": null,
+        "wave_difference_from_32": null
+      },
+      "16": {
+        "warm_seconds_mean": 3.021566333500232,
+        "latent_difference_from_32": {
+          "cosine": 0.9999644249717666,
+          "relative_l2": 0.008436720255136289,
+          "max_abs": 0.16910922527313232
+        },
+        "wave_difference_from_32": {
+          "cosine": 0.9999148995862553,
+          "relative_l2": 0.013368106744274147,
+          "max_abs": 0.07138035073876381
+        }
+      },
+      "8": {
+        "warm_seconds_mean": 1.7667731549997825,
+        "latent_difference_from_32": {
+          "cosine": 0.9994408108061681,
+          "relative_l2": 0.03346184941438633,
+          "max_abs": 0.883417971432209
+        },
+        "wave_difference_from_32": {
+          "cosine": 0.9987896758712496,
+          "relative_l2": 0.04963371632002744,
+          "max_abs": 0.27862846851348877
+        }
+      }
+    }
+  },
+  "acceptance": {
+    "ready": true,
+    "source_commit": "25455ed8a9164e4fced3e31ea5d239f99300890f",
+    "artifacts": {
+      "yue2-engine-cpu-x86_64.tar.gz": "66a0b88daa20b4da7e14b1b4aed7d39fe4f6003015d887fdd71a6ee1826425d1",
+      "yue2-engine-cuda12-x86_64.tar.gz": "c7420b1718589a1cc641d0e6da0fd803c0c13a88f4e74a01c55b0366d5125039"
+    },
+    "selected_steps": {
+      "quality": 32,
+      "balanced": 32,
+      "speed": 16
+    },
+    "speed_16_vs_32_planned_song_wave_relative_l2": 0.03334345573630183,
+    "speed_8_steps": "Measured as an optional control; exceeded the 0.1 relative-waveform-L2 selection tolerance on the planned-song case and was not chosen as default",
+    "checks": [
+      "fresh-process stochastic resume and retry",
+      "retained/evicted equivalence",
+      "six final reference probes",
+      "relocated CPU full generation",
+      "isolated Cantor 0.2.10 install/load/generate",
+      "multilingual and instrumental finite normalized audio",
+      "independent precision and warm solver comparisons",
+      "clean immutable archive hashes"
+    ],
+    "limitations": [
+      "No human listening assessment",
+      "Native per-ID Philox seeds differ from Torch GPU grid-stride seeds",
+      "Six-minute capacity used eight solver steps and supplied semantic tokens",
+      "Only Linux x86_64 CPU and A10G CUDA generation were executed"
+    ]
+  },
+  "publication": [
+    {
+      "url": "https://ckpts.cantorfm.com/backends/25455ed8a916/yue2-engine-cpu-x86_64.tar.gz",
+      "bytes": 7768386,
+      "sha256": "66a0b88daa20b4da7e14b1b4aed7d39fe4f6003015d887fdd71a6ee1826425d1",
+      "public_verified": true
+    },
+    {
+      "url": "https://ckpts.cantorfm.com/backends/25455ed8a916/yue2-engine-cuda12-x86_64.tar.gz",
+      "bytes": 72993755,
+      "sha256": "c7420b1718589a1cc641d0e6da0fd803c0c13a88f4e74a01c55b0366d5125039",
+      "public_verified": true
+    }
+  ],
+  "node": {
+    "passed": true,
+    "commands": [
+      {
+        "command": "pull",
+        "exit_code": 0
+      },
+      {
+        "command": "backends",
+        "exit_code": 0
+      },
+      {
+        "command": "generate",
+        "exit_code": 0
+      }
+    ],
+    "channels": 2,
+    "sample_rate": 48000,
+    "frames": 719936,
+    "isolated_config": true,
+    "relay": "loopback only",
+    "model_blobs": "reused independently verified immutable bytes"
+  },
+  "optional_eight_step_seconds": 6.739395333500397
+}

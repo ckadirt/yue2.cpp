@@ -13,10 +13,15 @@ def main():
     parser.add_argument('--library', type=Path, required=True)
     parser.add_argument('--models', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--speed-steps', type=int, choices=[8, 16], default=16)
+    parser.add_argument('--tiers', nargs='+', choices=['quality', 'balanced', 'speed'],
+                        default=['quality', 'balanced', 'speed'])
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=False)
     report = {'scope': 'Single A10G, one frozen 30-second English planned-song request; warm timings include score planning. Quantization may change the planned score.', 'presets': {}}
-    for name, quant, steps in [('quality', 'BF16', 32), ('balanced', 'Q8_0', 32), ('speed', 'Q5_K_M', 16)]:
+    for name, quant, steps in [('quality', 'BF16', 32), ('balanced', 'Q8_0', 32), ('speed', 'Q5_K_M', args.speed_steps)]:
+        if name not in args.tiers:
+            continue
         request = {'caption': 'English, piano pop, warm expressive lead vocal, soft drums, clear production',
             'lyrics': '[Verse]\nMorning light is on the window\nEvery road will lead me home\n[Chorus]\nLet the music carry us together\nWe will never walk alone',
             'cot': 'full', 'duration': 30, 'seed': 1234, 'inference_steps': steps,

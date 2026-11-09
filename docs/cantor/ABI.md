@@ -1,7 +1,8 @@
 # Cantor ABI v1 for YuE2
 
-Status: initial adapter; CPU contract tests pass. Real-model GPU validation and
-preset selection are still in progress. See `work-log.md` for current evidence.
+Status: CPU/CUDA generation, fresh-process resumes, reference checks, and real
+Cantor 0.2.10 execution passed. See `validation.md`, `presets.md`, and the work
+log for the pinned release, measured recipes, and known limits.
 
 The public interface is `include/cantor_engine.h`. Family identity is `yue2`.
 The shared library is `libcantor_engine.so` / `libcantor_engine.dylib` /
@@ -38,6 +39,10 @@ the acoustic solver and `guidance_scale` to semantic CFG. Explicit `lm_seed`
 can differ from acoustic `seed`; otherwise one supplied seed controls both.
 Supplied semantic tokens without a score use direct (`off`) conditioning;
 the engine does not invent an unrelated score for a replay.
+
+Supplied ABC is a native-API capability. The initial Cantor catalog does not
+declare an ABC text field because the current host text-extension validator
+rejects newlines. It does expose automatic score mode (`full`, `melody`, `off`).
 
 Output uses the same percentile peak normalization as the native tool (default
 `peak_clip=10`, range 0–999; zero selects ordinary peak normalization).

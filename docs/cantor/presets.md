@@ -1,6 +1,6 @@
 # Quality, balanced, and speed presets
 
-Status: **initial measurements complete; final release validation pending**, 2026-11-09.
+Status: **selected and validated; engine archives hosted**, 2026-11-09.
 
 The user's requirement is three meaningful presets, each selecting the right
 precision for every component. A low-bit option is acceptable only if it
@@ -23,40 +23,63 @@ Upstream quantization scripts deliberately stop at Q5_K_M for the main model.
 They do not publish Q4 for this implementation. Audio.cpp's Q4 files use a
 different format/layout and must not be substituted into this fork.
 
-## Candidate generation presets
+## Selected generation presets
 
-| Label | Main model | VAE | Decision |
-|---|---|---|---|
-| Quality | BF16 | F32 | Highest released precision; numerical reference |
-| Balanced | Q8_0 | F32 | Preferred: near BF16 numerically; faster than BF16 and essentially tied with Q6 |
-| Speed | Q5_K_M candidate | F32 | Validate a deliberate 16-step recipe; quantization alone gives only a small speed gain |
+| Label / Cantor tag | Main model | VAE | Midpoint steps | Catalog VRAM reservation |
+|---|---|---|---:|---:|
+| Quality / `3b-quality` | BF16 | F32 | 32 | 16 GiB |
+| Balanced / `3b-balanced` | Q8_0 | F32 | 32 | 12 GiB |
+| Speed / `3b-fast` | Q5_K_M | F32 | 16 | 10 GiB |
 
-Quality and balanced retain 32 midpoint steps. A speed recipe with 16 steps is
-an explicit solver setting, separate from its checkpoint precision. The 8-step
-option needs stronger quality evidence before becoming a default.
+The main GGUF includes both AR and NAR experts. These presets select its
+published recipe as a whole, rather than pretending AR and NAR are separate
+downloadable roles. VAE F32 is the highest released decoder source precision;
+the native runtime uses optimized F16 convolution weights with F32 activations.
+Optional audio encoders/transcribers are not required for this generation arc.
 
-The first isolated A10G matrix used 300 frames (12 seconds), direct conditioning,
-CFG 1, 32 steps, retained weights, and two exact-repeat warm runs. Warm times
-were BF16 **4.256 s**, Q8 **3.582 s**, Q6 **3.587 s**, and Q5 **3.439 s**.
-Q8's fixed-semantic latent relative L2 against BF16 was **0.01549**; Q6 and Q5
-were about **0.067**. Q5 changed one probe's top-logit choice, while Q8 and Q6
-kept it. These are diagnostic differences, not human judgments of a song.
+On the final portable A10G build, a frozen 30-second English request with full
+score planning, CFG 1, and seed 1234 took:
 
-At 32 steps Q6 offers no measured latency benefit over Q8 and has appreciably
-larger latent differences. Q5 is only about 4% faster than Q8 in this short
-matrix. Thus the speed tier must be justified by its complete measured recipe.
-See [raw summary](measurements/matrix-01-summary.json). Full-duration memory,
-warm step-count comparisons, and multilingual review clips remain in progress.
+| Preset | First request in a new context | Warm mean, two exact-repeat runs |
+|---|---:|---:|
+| Quality | 50.78 s | **13.91 s** |
+| Balanced | 32.25 s | **11.39 s** |
+| Speed | 23.26 s | **8.02 s** |
+
+Warm measurements retain weights. Cold measurements include component SHA-256
+verification, loading and graph setup, and exclude downloading model files.
+These are one-hardware, one-prompt examples, not cross-device performance
+guarantees. Quantization can change the planned composition.
+
+Independent 30-second, 32-step direct-conditioning comparisons averaged
+BF16 **10.22 s**, Q8 **8.78 s**, Q6 **8.69 s**, and Q5 **8.27 s**. Q6's small
+latency advantage did not justify another tier over Q8's closer reference
+results. Fixed-code waveform relative L2 against BF16 was Q8 **0.0313**,
+Q6 **0.0340**, and Q5 **0.0658**; these are numerical diagnostics, not listening
+judgments. An earlier independent 12-second matrix is retained for comparison.
+
+Step-count changes were measured separately after warming weights and graphs.
+The full planned-song Q5 render at 16 steps differed from its identical
+32-step render by **0.03334 relative waveform L2**. Eight steps ran faster
+(6.74 s end to end), but changed that waveform by **0.13647**, exceeding the
+0.1 numerical tolerance used for this preset decision. Eight remains an
+optional control; 16 is the speed default. This tolerance is an engineering
+proxy, not a perceptual-quality guarantee. No human listening is claimed.
+
+English, Spanish and empty-lyrics instrumental clips were retained for each
+selected recipe. Six-minute supplied-code capacity checks passed on A10G;
+see [validation](validation.md) and [final measurements](measurements/release-25455ed-summary.json).
 
 If optional transcription is included later: compare F32 MERT + F32 SheetSage2
 for quality, and matched Q8_0 files for smaller presets. This is a candidate
 policy, not evidence that Q8 is faster on every device or equally accurate on
 every recording.
 
-Keep composition mode, acoustic steps, prompt, seed, and target frames fixed
-when comparing quantization. Do not quietly remove planning or lower solver
-steps to manufacture a speed win. Report those as independent controls if
-tested. Include warm/cold stage timings, peak VRAM, hashes, and retained outputs.
+All three presets use the same F32 VAE and explicit CFG 1 default. Score mode
+defaults to `full`. Recording covers and automatic lyric writing are not
+advertised. Cantor accepts 15–360-second requests for this engine; supplied
+ABC is supported by the native API. It is not exposed as an app parameter:
+the host's shared text-extension validator currently rejects multiline text.
 
 ## Pinned sizes and SHA-256
 

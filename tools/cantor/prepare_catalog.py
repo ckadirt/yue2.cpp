@@ -36,8 +36,7 @@ def main():
                 {"kind": "number", "key": "guidance_scale", "label": "Guidance", "default": 1.0,
                  "minimum": 0, "maximum": 20, "step": 0.1},
                 {"kind": "choice", "key": "cot", "label": "Score mode", "default": "full",
-                 "choices": ["full", "melody", "off"]},
-                {"kind": "text", "key": "abc", "label": "ABC score", "default": "", "max_bytes": 65536}],
+                 "choices": ["full", "melody", "off"]}],
             "capabilities": [], "acts": []})
     model = {"name": "yue2", "engine": "yue2", "licence": "CC-BY-NC-4.0", "variants": variants}
     (args.output / "catalog-fragment.json").write_text(json.dumps(model, indent=2) + "\n")

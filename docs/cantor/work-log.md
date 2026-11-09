@@ -277,3 +277,75 @@
 - Existing `/cantor/bin/cantor` is 0.2.10 and exports support for the duration
   extension. Use a separate private test directory and loopback relay for the
   final real-node check; leave the owner's normal node configuration untouched.
+
+## 2026-11-09 20:44 UTC — final source frozen and CPU archive validated
+
+- Final native source **`25455ed8a9164e4fced3e31ea5d239f99300890f`** pushed.
+  CPU CI passed: https://github.com/ckadirt/yue2.cpp/actions/runs/42693475733.
+  Recovered CPU archive SHA-256
+  `66a0b88daa20b4da7e14b1b4aed7d39fe4f6003015d887fdd71a6ee1826425d1`,
+  7,768,386 bytes. Real relocated CPU inference passed replay and eight-token
+  AR generation through all stages, with finite normalized stereo PCM.
+- CUDA build is still on **`f66260f`**, intentionally preserving its source
+  identity while compiling reusable kernels. The persisted
+  `/cantor/validation/yue2/post-build-04.sh` waits for that archive, fast-forwards
+  to **`25455ed`**, rebuilds the adapter and probes, repackages, and runs final
+  restart, timing, numeric-reference and multilingual validation.
+- Active CUDA build: `/cantor/validation/yue2/portable-build-no-nccl-03.log`.
+  Queued release driver: `/cantor/validation/yue2/post-build-04.log`.
+- Prepared isolated real-node and immutable R2-upload helpers in this directory
+  and on the volume. No backend or catalog has been published yet.
+- Cantor catalog worktree: `.worktrees/cantor-yue2`, branch
+  `feat/yue2-engine-20261109`, based on `0de557f`. Only its catalog draft is
+  modified; the owner's main checkout and unrelated uncommitted edits are
+  untouched. Asset checks pass. The ABC text control is capped at 3 KiB to fit
+  the host's 4 KiB aggregate extension budget; the native ABI supports larger
+  supplied scores subject to its token/context limits.
+- The corrected 3 KiB catalog-generator limit is a local metadata change and
+  will be committed with final evidence after binary packaging. Do not move the
+  active GPU checkout ahead during the frozen release build.
+
+## 2026-11-09 21:45 UTC — final release accepted and archives published
+
+- Final binary source remains **`25455ed8a9164e4fced3e31ea5d239f99300890f`**.
+  Portable CPU and CUDA archives both passed relocation, dependency audits,
+  functional generation, and final reference/restart checks. CUDA includes
+  SM86 SASS plus SM75/SM80 PTX; no NCCL dependency. See `validation.md`.
+- Default recipes are **BF16 + F32 VAE + 32 steps**, **Q8_0 + F32 + 32**,
+  and **Q5_K_M + F32 + 16**. Complete 30-second planned-song warm means:
+  **13.9075 / 11.3948 / 8.0221 s**. Two repeat outputs per recipe match exactly.
+- Eight steps measured 6.7394 s, but its planned-song waveform relative L2
+  against 32 steps was 0.13647. The initially attempted acceptance correctly
+  stopped before upload. Retained the 0.1 selection tolerance, checked the
+  same song at 32 steps, and selected 16 (relative L2 0.03334). This is a
+  numerical engineering proxy, not a human listening assessment.
+- Both final stochastic fresh-process cases passed; all six final reference
+  probes passed. Normalized English/Spanish/instrumental clips were saved for
+  each chosen recipe, with extra 8-step and Q5/32 comparisons.
+- Isolated Cantor **0.2.10** pull, backend installation/CUDA load, and generation
+  passed: **719,936 stereo frames at 48 kHz** from a 15-second request. The first
+  four-second test was rejected at admission; corrected the harness to the
+  existing 15-second minimum. Owner configuration was not changed.
+- Public CPU archive: 7,768,386 bytes,
+  `66a0b88daa20b4da7e14b1b4aed7d39fe4f6003015d887fdd71a6ee1826425d1`.
+  Public CUDA archive: 72,993,755 bytes,
+  `c7420b1718589a1cc641d0e6da0fd803c0c13a88f4e74a01c55b0366d5125039`.
+  Both are under `https://ckpts.cantorfm.com/backends/25455ed8a916/`, and full
+  public bodies were hash-verified. Conditional writes replaced no old object.
+  Weights stay at pinned upstream HF URLs; no new weight mirror was needed.
+- Local full evidence: `artifacts/release-25455ed8a916/evidence/`; listening
+  index: `artifacts/release-25455ed8a916/SAMPLES.md`. Private test-node keys and
+  configuration were excluded from the evidence download.
+- Registration: https://github.com/ckadirt/Cantor/pull/5, branch
+  **`feat/yue2-engine-20261109-publish`**, latest commit **`c0981de`**. It is based
+  on published main **`8d264cb`**, excluding six unrelated unpublished local
+  commits. Only catalog/backends and a necessary CI runner-label repair change.
+- Host text extensions reject newlines. Removed the proposed ABC app field;
+  native ABI supplied-ABC support remains validated. Catalog controls are
+  steps, guidance, and score mode. No recording covers or lyric writing.
+- GitHub retired macOS 14 on November 2. Its CI job cancelled before any steps.
+  Moved that entry to supported `macos-15`, retaining `macos-15-intel`, so CI
+  can run all checks. Source: https://github.blog/changelog/2026-10-01-github-actions-macos-14-runner-image-retirement/.
+- Remaining work: finish registration CI, merge/deploy, verify live manifests,
+  record shutdown. No further GPU inference is needed. The session's enforced
+  deadline remains **23:05:54 UTC**; stop it early after recovery notes are saved.
