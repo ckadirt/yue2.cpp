@@ -79,6 +79,14 @@ def main():
         else:
             names = [line.split()[-1].removeprefix("_") for line in output("nm", "-gU", str(root / name)).splitlines() if line.split()]
             for f in [*root.glob("*.dylib"), *root.glob("*.so")]:
+                commands = output('otool', '-l', str(f))
+                minimum = re.search(r'^\s*(?:minos|version)\s+(\d+(?:\.\d+){1,2})\s*$', commands, re.M)
+                if not minimum:
+                    raise RuntimeError(f'Missing minimum macOS version: {f.name}')
+                version = tuple(int(x) for x in minimum.group(1).split('.'))
+                version += (0,) * (3 - len(version))
+                if version > (14, 0, 0):
+                    raise RuntimeError(f'{f.name} requires macOS {minimum.group(1)}; Cantor targets 14.0')
                 if f.suffix == '.dylib':
                     subprocess.run(['install_name_tool', '-id', '@rpath/' + f.name, str(f)], check=True)
                 needed = [line.strip().split(" (", 1)[0] for line in output("otool", "-L", str(f)).splitlines()[1:]]
@@ -112,6 +120,8 @@ def main():
                "dependencies": dependencies, "validation": "relocated ABI and CPU dispatch; no generation"}
     if windows and args.backend == 'vulkan':
         receipt['runtime_prerequisites'] = ['Vulkan Runtime loader (vulkan-1.dll), normally installed with the graphics driver']
+    if system == 'macos':
+        receipt['maximum_macos_minimum_version'] = '14.0'
     args.output.with_suffix(args.output.suffix + ".json").write_text(json.dumps(receipt, indent=2) + "\n")
     print(json.dumps(receipt))
 
