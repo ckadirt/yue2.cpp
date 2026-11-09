@@ -68,6 +68,18 @@ jobs:
           git -C "$RUNNER_TEMP/spirv-source" checkout 09913f088a1197aba4aefd300a876b2ebbaa3391
           cmake -S "$RUNNER_TEMP/spirv-source" -B "$RUNNER_TEMP/spirv-build" -DCMAKE_INSTALL_PREFIX="$RUNNER_TEMP/spirv"
           cmake --install "$RUNNER_TEMP/spirv-build" --config Release
+      - name: Provide the standard Windows Vulkan loader for load checks
+        if: runner.os == 'Windows' && matrix.backend == 'vulkan'
+        shell: pwsh
+        run: |
+          $archive = Join-Path $env:RUNNER_TEMP 'vulkan-runtime.zip'
+          Invoke-WebRequest 'https://sdk.lunarg.com/sdk/download/1.4.309.0/windows/VulkanRT-1.4.309.0-Components.zip?Human=true' -OutFile $archive
+          if ((Get-FileHash $archive -Algorithm SHA256).Hash.ToLower() -ne '7d969f4d7b44e387667d3148f61559497c22d50cbe3d50adc9e5409afbce2df1') { throw 'Vulkan runtime checksum mismatch' }
+          $directory = Join-Path $env:RUNNER_TEMP 'vulkan-runtime'
+          Expand-Archive $archive -DestinationPath $directory
+          $runtime = Join-Path $directory 'VulkanRT-1.4.309.0-Components/x64'
+          if (!(Test-Path (Join-Path $runtime 'vulkan-1.dll'))) { throw 'Missing Vulkan loader' }
+          "CANTOR_VULKAN_RUNTIME_DIR=$runtime" | Out-File -Append -Encoding utf8 $env:GITHUB_ENV
       - name: Configure portable engine
         shell: bash
         run: >-

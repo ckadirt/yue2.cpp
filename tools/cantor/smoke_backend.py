@@ -7,6 +7,10 @@ import sys
 root = Path(sys.argv[1]).resolve()
 if sys.platform == "win32":
     dll_directory = os.add_dll_directory(str(root))
+    # Hosted Windows runners lack graphics-driver Vulkan Runtime installs.
+    # CI supplies the hash-pinned standard loader as an external prerequisite.
+    if os.environ.get('CANTOR_VULKAN_RUNTIME_DIR'):
+        vulkan_runtime_directory = os.add_dll_directory(os.environ['CANTOR_VULKAN_RUNTIME_DIR'])
     engine_name, core_name = "cantor_engine.dll", "ggml-yue2.dll"
 elif sys.platform == "darwin":
     engine_name, core_name = "libcantor_engine.dylib", "libggml-yue2.dylib"

@@ -110,6 +110,8 @@ def main():
                "source_commit": commit, "source_dirty": dirty, "file": args.output.name,
                "bytes": args.output.stat().st_size, "sha256": hashlib.sha256(args.output.read_bytes()).hexdigest(),
                "dependencies": dependencies, "validation": "relocated ABI and CPU dispatch; no generation"}
+    if windows and args.backend == 'vulkan':
+        receipt['runtime_prerequisites'] = ['Vulkan Runtime loader (vulkan-1.dll), normally installed with the graphics driver']
     args.output.with_suffix(args.output.suffix + ".json").write_text(json.dumps(receipt, indent=2) + "\n")
     print(json.dumps(receipt))
 
