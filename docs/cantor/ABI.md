@@ -39,6 +39,8 @@ can differ from acoustic `seed`; otherwise one supplied seed controls both.
 Supplied semantic tokens without a score use direct (`off`) conditioning;
 the engine does not invent an unrelated score for a replay.
 
+Output uses the same percentile peak normalization as the native tool (default
+`peak_clip=10`, range 0–999; zero selects ordinary peak normalization).
 One request produces one song. Duration is bounded to 0.04–360 seconds and
 also caps semantic frames at 25 Hz. This is an upper bound, not a guarantee
 that the model reaches that length. Lyrics can be empty for the upstream
@@ -69,6 +71,13 @@ engine revisions/backends is intentionally refused rather than guessed.
 The envelopes also retain score/semantic token-cap indicators. A completed
 stage may have reached its requested token cap; completion does not assert
 that the composition reached a musical ending.
+
+The native sampler keeps one stable Philox subsequence per vocabulary ID.
+PyTorch's CUDA exponential kernel uses a GPU-dependent grid-stride layout;
+equal seeds therefore do not promise the same full-vocabulary Torch song on
+every GPU. This does not affect native same-build pause/resume equivalence.
+`tools/cantor/diagnose_draw.py` checks the compact cuRAND sequence, reproduces
+the device's Torch layout, and measures the native sampling distribution.
 
 CODES resumes by rebuilding the AR cache with one-token forwards for the saved
 history and restoring the absolute Philox sampling position. DIFFUSE resumes

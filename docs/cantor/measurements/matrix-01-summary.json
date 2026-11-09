@@ -1,0 +1,340 @@
+{
+  "frames": 300,
+  "ode_steps": 32,
+  "keep_loaded": true,
+  "scope": "single A10G; fixed controls; numerical diagnostics are not listening judgments",
+  "variants": {
+    "BF16": {
+      "warm_pipeline_seconds_mean": 4.256333666500495,
+      "cold": [
+        {
+          "audio_seconds": 11.998666666666667,
+          "pipeline_seconds": 47.49248535100014,
+          "audio_sha256": "a9d8ee036ff949284916e22c121dd9c5c038ffddd3a30002d8b3a3e74eb22535",
+          "sampled_device_peak_mib": 9902,
+          "memory_sample_interval_seconds": 0.2,
+          "peak_abs": 0.471923828125,
+          "rms": 0.09504051506519318,
+          "stage_seconds": [
+            44.32399179999993,
+            2.3530980600003204,
+            0.8153954909998902
+          ]
+        }
+      ],
+      "warm": [
+        {
+          "audio_seconds": 11.998666666666667,
+          "pipeline_seconds": 4.255729780000365,
+          "audio_sha256": "a9d8ee036ff949284916e22c121dd9c5c038ffddd3a30002d8b3a3e74eb22535",
+          "sampled_device_peak_mib": 11116,
+          "memory_sample_interval_seconds": 0.2,
+          "peak_abs": 0.471923828125,
+          "rms": 0.09504051506519318,
+          "stage_seconds": [
+            2.2589433430002828,
+            1.8627124300001014,
+            0.13407400699998107
+          ]
+        },
+        {
+          "audio_seconds": 11.998666666666667,
+          "pipeline_seconds": 4.2569375530006255,
+          "audio_sha256": "a9d8ee036ff949284916e22c121dd9c5c038ffddd3a30002d8b3a3e74eb22535",
+          "sampled_device_peak_mib": 11116,
+          "memory_sample_interval_seconds": 0.2,
+          "peak_abs": 0.471923828125,
+          "rms": 0.09504051506519318,
+          "stage_seconds": [
+            2.2533392240002286,
+            1.866225396000118,
+            0.13737293300027886
+          ]
+        }
+      ],
+      "fixed_semantic": [
+        {
+          "audio_seconds": 11.998666666666667,
+          "pipeline_seconds": 2.203989112999807,
+          "audio_sha256": "9ef46e532c3a2678ac82fd41787fb6d8cf9262f7e7492cfcbd6d2856563462ff",
+          "sampled_device_peak_mib": 11168,
+          "memory_sample_interval_seconds": 0.2,
+          "peak_abs": 0.387451171875,
+          "rms": 0.06603386253118515,
+          "stage_seconds": [
+            0.0004506069999479223,
+            2.068366689999948,
+            0.1351718159999109
+          ]
+        }
+      ]
+    },
+    "Q8_0": {
+      "warm_pipeline_seconds_mean": 3.5818441359999724,
+      "fixed_semantic_latent_difference": {
+        "cosine": 0.999880084035307,
+        "relative_l2": 0.015486509704249567,
+        "max_abs": 0.15009050071239471
+      },
+      "fixed_semantic_wave_difference": {
+        "cosine": 0.9998197052798034,
+        "relative_l2": 0.02022775673433307,
+        "max_abs": 0.0230712890625
+      },
+      "lm_logits": {
+        "prefill": {
+          "cosine": 0.9999451488779617,
+          "relative_l2": 0.01780591909328519,
+          "max_abs": 0.5824337005615234,
+          "argmax_equal": true
+        },
+        "decode": {
+          "cosine": 0.9999541882076957,
+          "relative_l2": 0.011774837728093967,
+          "max_abs": 0.39549946784973145,
+          "argmax_equal": true
+        }
+      },
+      "cold": [
+        {
+          "audio_seconds": 11.998666666666667,
+          "pipeline_seconds": 26.606766192000123,
+          "audio_sha256": "54b34d6f8609c247adf2bc6c1385a9b10a478fab33d3b55b28c0a24e0272c2d1",
+          "sampled_device_peak_mib": 6694,
+          "memory_sample_interval_seconds": 0.2,
+          "peak_abs": 0.48486328125,
+          "rms": 0.09173384308815002,
+          "stage_seconds": [
+            23.665923784999904,
+            2.180587139000181,
+            0.7602552680000372
+          ]
+        }
+      ],
+      "warm": [
+        {
+          "audio_seconds": 11.998666666666667,
+          "pipeline_seconds": 3.580460448999929,
+          "audio_sha256": "54b34d6f8609c247adf2bc6c1385a9b10a478fab33d3b55b28c0a24e0272c2d1",
+          "sampled_device_peak_mib": 7918,
+          "memory_sample_interval_seconds": 0.2,
+          "peak_abs": 0.48486328125,
+          "rms": 0.09173384308815002,
+          "stage_seconds": [
+            1.5169304420001026,
+            1.9265244279999933,
+            0.13700557899983323
+          ]
+        },
+        {
+          "audio_seconds": 11.998666666666667,
+          "pipeline_seconds": 3.5832278230000156,
+          "audio_sha256": "54b34d6f8609c247adf2bc6c1385a9b10a478fab33d3b55b28c0a24e0272c2d1",
+          "sampled_device_peak_mib": 7918,
+          "memory_sample_interval_seconds": 0.2,
+          "peak_abs": 0.48486328125,
+          "rms": 0.09173384308815002,
+          "stage_seconds": [
+            1.51628080699993,
+            1.9275185639999108,
+            0.13942845200017473
+          ]
+        }
+      ],
+      "fixed_semantic": [
+        {
+          "audio_seconds": 11.998666666666667,
+          "pipeline_seconds": 2.2702373400006763,
+          "audio_sha256": "5807df74765b559881303e8606c7408a78cd14b66471e7d5d7ca74aab8c161ca",
+          "sampled_device_peak_mib": 7970,
+          "memory_sample_interval_seconds": 0.2,
+          "peak_abs": 0.384033203125,
+          "rms": 0.06556157767772675,
+          "stage_seconds": [
+            0.00032556299993302673,
+            2.1339284110003973,
+            0.135983366000346
+          ]
+        }
+      ]
+    },
+    "Q6_K": {
+      "warm_pipeline_seconds_mean": 3.586859170000025,
+      "fixed_semantic_latent_difference": {
+        "cosine": 0.9977299840935145,
+        "relative_l2": 0.06757804092169736,
+        "max_abs": 1.4467262625694275
+      },
+      "fixed_semantic_wave_difference": {
+        "cosine": 0.9962196064929321,
+        "relative_l2": 0.08920123796394955,
+        "max_abs": 0.130889892578125
+      },
+      "lm_logits": {
+        "prefill": {
+          "cosine": 0.9998212678067304,
+          "relative_l2": 0.01904382356499415,
+          "max_abs": 0.8678549826145172,
+          "argmax_equal": true
+        },
+        "decode": {
+          "cosine": 0.9997059455954356,
+          "relative_l2": 0.036823873645490245,
+          "max_abs": 0.938959002494812,
+          "argmax_equal": true
+        }
+      },
+      "cold": [
+        {
+          "audio_seconds": 11.998666666666667,
+          "pipeline_seconds": 23.709712287000002,
+          "audio_sha256": "734b3d67e590ed6e645b78e428bbf74f6f23fc4c7ce9b6a02a083dbe7f275aa9",
+          "sampled_device_peak_mib": 5884,
+          "memory_sample_interval_seconds": 0.2,
+          "peak_abs": 0.61181640625,
+          "rms": 0.08225126564502716,
+          "stage_seconds": [
+            20.545316873000047,
+            2.361744022000039,
+            0.8026513919999161
+          ]
+        }
+      ],
+      "warm": [
+        {
+          "audio_seconds": 11.998666666666667,
+          "pipeline_seconds": 3.5853442040001937,
+          "audio_sha256": "734b3d67e590ed6e645b78e428bbf74f6f23fc4c7ce9b6a02a083dbe7f275aa9",
+          "sampled_device_peak_mib": 7094,
+          "memory_sample_interval_seconds": 0.2,
+          "peak_abs": 0.61181640625,
+          "rms": 0.08225126564502716,
+          "stage_seconds": [
+            1.3051243780000732,
+            2.144878308999978,
+            0.13534151700014263
+          ]
+        },
+        {
+          "audio_seconds": 11.998666666666667,
+          "pipeline_seconds": 3.5883741359998567,
+          "audio_sha256": "734b3d67e590ed6e645b78e428bbf74f6f23fc4c7ce9b6a02a083dbe7f275aa9",
+          "sampled_device_peak_mib": 7094,
+          "memory_sample_interval_seconds": 0.2,
+          "peak_abs": 0.61181640625,
+          "rms": 0.08225126564502716,
+          "stage_seconds": [
+            1.298015974000009,
+            2.1532136440000613,
+            0.13714451799978633
+          ]
+        }
+      ],
+      "fixed_semantic": [
+        {
+          "audio_seconds": 11.998666666666667,
+          "pipeline_seconds": 2.510003702999711,
+          "audio_sha256": "9180b01ffba50f88eaa1389033fa0e9c7aa3b79519808b1faca1ae638726137d",
+          "sampled_device_peak_mib": 7144,
+          "memory_sample_interval_seconds": 0.2,
+          "peak_abs": 0.38671875,
+          "rms": 0.06712190806865692,
+          "stage_seconds": [
+            0.0003358740000294347,
+            2.3734954960000323,
+            0.13617233299964937
+          ]
+        }
+      ]
+    },
+    "Q5_K_M": {
+      "warm_pipeline_seconds_mean": 3.4390964095000527,
+      "fixed_semantic_latent_difference": {
+        "cosine": 0.9977626816130553,
+        "relative_l2": 0.06686042012380967,
+        "max_abs": 0.8728881776332855
+      },
+      "fixed_semantic_wave_difference": {
+        "cosine": 0.9972418285127872,
+        "relative_l2": 0.07493898938543238,
+        "max_abs": 0.047119140625
+      },
+      "lm_logits": {
+        "prefill": {
+          "cosine": 0.999384343117983,
+          "relative_l2": 0.03714941266141211,
+          "max_abs": 2.5468826293945312,
+          "argmax_equal": false
+        },
+        "decode": {
+          "cosine": 0.9990917240932081,
+          "relative_l2": 0.06140838752516035,
+          "max_abs": 2.189821243286133,
+          "argmax_equal": true
+        }
+      },
+      "cold": [
+        {
+          "audio_seconds": 11.998666666666667,
+          "pipeline_seconds": 24.291779862999647,
+          "audio_sha256": "a8c2f1ff9881edf0e8e404f2020352d19b9388783acd23634f4dd5ec253e6d14",
+          "sampled_device_peak_mib": 5580,
+          "memory_sample_interval_seconds": 0.2,
+          "peak_abs": 0.5361328125,
+          "rms": 0.10451637208461761,
+          "stage_seconds": [
+            21.250655295999877,
+            2.2642994489997363,
+            0.7768251180000334
+          ]
+        }
+      ],
+      "warm": [
+        {
+          "audio_seconds": 11.998666666666667,
+          "pipeline_seconds": 3.4379420590003065,
+          "audio_sha256": "a8c2f1ff9881edf0e8e404f2020352d19b9388783acd23634f4dd5ec253e6d14",
+          "sampled_device_peak_mib": 6790,
+          "memory_sample_interval_seconds": 0.2,
+          "peak_abs": 0.5361328125,
+          "rms": 0.10451637208461761,
+          "stage_seconds": [
+            1.2207346719997076,
+            2.079523306000283,
+            0.13768408100031593
+          ]
+        },
+        {
+          "audio_seconds": 11.998666666666667,
+          "pipeline_seconds": 3.440250759999799,
+          "audio_sha256": "a8c2f1ff9881edf0e8e404f2020352d19b9388783acd23634f4dd5ec253e6d14",
+          "sampled_device_peak_mib": 6790,
+          "memory_sample_interval_seconds": 0.2,
+          "peak_abs": 0.5361328125,
+          "rms": 0.10451637208461761,
+          "stage_seconds": [
+            1.218907537999712,
+            2.0837516709998454,
+            0.13759155100024145
+          ]
+        }
+      ],
+      "fixed_semantic": [
+        {
+          "audio_seconds": 11.998666666666667,
+          "pipeline_seconds": 2.4376287810005124,
+          "audio_sha256": "6661a228ff5558feeadfc0b0f233323d7cff36f6d03781958c06310b6f40a1ff",
+          "sampled_device_peak_mib": 6840,
+          "memory_sample_interval_seconds": 0.2,
+          "peak_abs": 0.390625,
+          "rms": 0.06653514504432678,
+          "stage_seconds": [
+            0.0003481479998299619,
+            2.3002461690002747,
+            0.13703446400040775
+          ]
+        }
+      ]
+    }
+  }
+}

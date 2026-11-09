@@ -1,7 +1,10 @@
 # Implementation plan
 
-Updated: 2026-11-09. Status: initial ABI adapter builds on CPU and its two
-weightless tests pass. CUDA build and full-model validation remain in progress.
+Updated: 2026-11-09. Status: ABI adapter, fresh-process resume checks, precision
+matrix, six reference probes, and maximum-duration capacity tests pass. Final
+normalized-output validation, portable CUDA packaging, recipe selection, and
+Cantor distribution remain in progress. See the work log for the known Torch
+full-vocabulary equal-seed limitation and its verified CUDA-layout explanation.
 
 ## Authorized scope and constraints
 
@@ -81,6 +84,11 @@ validated. Optional community tokenizers/adapters remain separate components.
   hooks compile with the ABI wrapper and family-specific shared libraries.
 - Generic checkpoint codec and ABI header reuse the existing MiniMax adapter
   with its retained Apache license. CPU ABI/checkpoint tests pass.
-- A10G session is ready; all five generation GGUF files are hash-verified.
-- Added retained-weight request-state cleanup and a real-ABI Python harness;
-  GPU restart equivalence and numerical parity are not established yet.
+- All five generation GGUF files are hash-verified; BF16/Q8/Q6/Q5 matrix saved.
+- Stochastic fresh-process long-stream and score-planning resumes match exactly.
+- Tokenizer, sampling distribution, acoustic noise RNG, AR, NAR and VAE reference
+  checks pass. Native equal-seed draws differ from Torch on A10 because their
+  valid CUDA RNG layouts differ; the diagnostic reproduces the cause exactly.
+- Six-minute fixed-semantic capacity passed for BF16/Q8/Q5 on A10G.
+- A second explicitly authorized three-hour A10G session ends no later than
+  2026-11-09 23:05:54 UTC. Portable CUDA rebuild and final validation are active.

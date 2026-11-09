@@ -52,11 +52,19 @@ def main():
         names = [line.split()[-1] for line in exports.splitlines() if line.split()]
         if not names or any(not name.startswith("cantor_engine_") for name in names):
             raise SystemExit("Engine leaks non-ABI exports")
+        dependencies = {}
+        system = {"libc.so.6", "libm.so.6", "libdl.so.2", "libpthread.so.0", "librt.so.1",
+                  "libstdc++.so.6", "libgcc_s.so.1", "ld-linux-x86-64.so.2"}
+        allowed = system | {"cpu": set(), "cuda12": {"libcudart.so.12", "libcublas.so.12",
+                              "libcublasLt.so.12", "libcuda.so.1"}, "vulkan": {"libvulkan.so.1"}}[args.backend]
         for library in root.glob("*.so*"):
             dynamic = subprocess.check_output(["readelf", "-d", str(library)], text=True)
-            for needed in re.findall(r"Shared library: \[([^]]+)\]", dynamic):
+            dependencies[library.name] = re.findall(r"Shared library: \[([^]]+)\]", dynamic)
+            for needed in dependencies[library.name]:
                 if needed.startswith("libggml") and not (root / needed).is_file():
                     raise SystemExit(f"Missing dependency {needed} for {library.name}")
+                if not needed.startswith("libggml") and needed not in allowed:
+                    raise SystemExit(f"Unmanaged external dependency {needed} for {library.name}")
             if "RUNPATH" in dynamic and "[$ORIGIN]" not in dynamic:
                 raise SystemExit(f"Non-relocatable RUNPATH in {library.name}")
         # A clean interpreter loads the relocated engine and its CPU plugin.
@@ -86,7 +94,7 @@ core.ggml_backend_free(cpu)
     receipt = {"family": "yue2", "abi": 1, "backend": args.backend, "arch": "x86_64",
                "file": args.output.name, "bytes": args.output.stat().st_size, "source_dirty": dirty,
                "sha256": hashlib.sha256(args.output.read_bytes()).hexdigest(),
-               "source_commit": commit}
+               "source_commit": commit, "dependencies": dependencies}
     args.output.with_suffix(args.output.suffix + ".json").write_text(json.dumps(receipt, indent=2) + "\n")
     print(json.dumps(receipt))
 

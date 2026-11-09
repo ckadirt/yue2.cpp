@@ -21,7 +21,8 @@ int main(void) {
         "{\"caption\":\"x\",\"steps\":4294967297}",
         "{\"caption\":\"x\",\"semantic_sampling\":{\"max_tokens\":4294967297}}",
         "{\"caption\":\"x\",\"semantic_sampling\":{\"repetition_penalty\":1e100}}",
-        "{\"caption\":\"x\",\"semantic_sampling\":\"bad\"}"};
+        "{\"caption\":\"x\",\"semantic_sampling\":\"bad\"}",
+        "{\"caption\":\"x\\u0000y\"}", "{\"caption\":\"x\",\"peak_clip\":1000}"};
     for (unsigned i = 0; i < sizeof(invalid) / sizeof(invalid[0]); ++i) {
         uint8_t * out = (uint8_t *)(uintptr_t)1;
         size_t n = 9;

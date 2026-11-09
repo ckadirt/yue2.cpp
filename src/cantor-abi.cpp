@@ -1,6 +1,7 @@
 // Cantor ABI v1 adapter. Numerical work stays in the upstream implementation.
 #include "cantor_engine.h"
 #include "cantor-checkpoint.h"
+#include "audio-normalize.h"
 #include "pipeline.h"
 #include "version.h"
 #include "yyjson.h"
@@ -71,11 +72,12 @@ struct State {
 Yue2Request parse_request(const uint8_t * bytes, size_t size) {
     auto doc = document(bytes, size);
     auto * root = yyjson_doc_get_root(doc.get());
-    for (const char * key : {"style", "caption", "lyrics", "abc", "cot", "semantic_tokens"}) {
+    for (const char * key : {"style", "caption", "description", "tags", "lyrics", "abc", "cot", "semantic_tokens"}) {
         auto * v = yyjson_obj_get(root, key);
         require(!v || yyjson_is_str(v), "text request fields must be strings");
+        require(!v || std::strlen(yyjson_get_str(v)) == yyjson_get_len(v), "text fields cannot contain NUL characters");
     }
-    for (const char * key : {"steps", "inference_steps", "seed", "lm_seed", "lm_batch_size", "synth_batch_size", "top_k"}) {
+    for (const char * key : {"steps", "inference_steps", "seed", "lm_seed", "lm_batch_size", "synth_batch_size", "top_k", "peak_clip"}) {
         auto * v = yyjson_obj_get(root, key);
         require(!v || yyjson_is_int(v), "integer request field has the wrong type");
         if (v) {
@@ -130,6 +132,7 @@ Yue2Request parse_request(const uint8_t * bytes, size_t size) {
     if (!r.semantic_tokens.empty() && r.abc.empty()) r.cot = "off";
     require(std::isfinite(r.duration) && r.duration >= 0.04f && r.duration <= 360, "duration must be in [0.04,360]");
     require(r.steps >= 1 && r.steps <= 200, "steps must be in [1,200]");
+    require(r.peak_clip >= 0 && r.peak_clip <= 999, "peak_clip must be in [0,999]");
     require(std::isfinite(r.cfg_scale) && (r.cfg_scale == -1 || (r.cfg_scale >= 0 && r.cfg_scale <= 20)), "invalid guidance scale");
     require(r.lm_batch_size == 1 && r.synth_batch_size == 1, "Cantor runs one song per request");
     require(r.adapters.empty() && r.source_tokens.empty(), "adapters and continuation are not wired in this adapter");
@@ -461,6 +464,7 @@ cantor_status cantor_engine_run_stage(cantor_ctx * c, cantor_stage stage, const 
         }
         c->audio.resize(size_t(count) * 2);
         for (float x : c->audio) require(std::isfinite(x), "non-finite PCM output");
+        audio_normalize(c->audio.data(), count * 2, state.request.peak_clip);
         c->samples = count; return CANTOR_DONE;
     } catch (const std::bad_alloc &) { error(CANTOR_ERR_OOM, "YuE2 stage allocation failed"); }
       catch (const std::invalid_argument & e) { error(CANTOR_ERR_OTHER, e.what()); }

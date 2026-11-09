@@ -245,47 +245,7 @@ static float * audio_read(const char * path, int * T_out, int * sr_out) {
 //   999 = max (99.9001th percentile, clips top 0.1%)
 // the target percentile is 1.0 - peak_clip/1000000.0.
 // n_total = number of float samples (both channels combined).
-static void audio_normalize(float * audio, int n_total, int peak_clip = 10) {
-    if (n_total <= 0) {
-        return;
-    }
-
-    // clamp to valid range
-    if (peak_clip < 0) {
-        peak_clip = 0;
-    }
-    if (peak_clip > 999) {
-        peak_clip = 999;
-    }
-
-    // collect absolute values
-    std::vector<float> absvals((size_t) n_total);
-    for (int i = 0; i < n_total; i++) {
-        absvals[i] = audio[i] < 0.0f ? -audio[i] : audio[i];
-    }
-
-    // partial sort to find the target percentile
-    double pct = 1.0 - (double) peak_clip / 1000000.0;
-    size_t idx = (size_t) ((double) (n_total - 1) * pct);
-    std::nth_element(absvals.begin(), absvals.begin() + idx, absvals.end());
-    float ref = absvals[idx];
-
-    if (ref < 1e-6f) {
-        return;
-    }
-
-    // scale so the target percentile hits 1.0, hard clip the rest
-    float gain = 1.0f / ref;
-    for (int i = 0; i < n_total; i++) {
-        float v = audio[i] * gain;
-        if (v > 1.0f) {
-            v = 1.0f;
-        } else if (v < -1.0f) {
-            v = -1.0f;
-        }
-        audio[i] = v;
-    }
-}
+#include "audio-normalize.h"
 
 // WAV output format
 enum WavFormat {

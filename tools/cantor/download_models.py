@@ -4,7 +4,6 @@ import hashlib
 import json
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
-from huggingface_hub import hf_hub_download
 
 REPO = "Serveurperso/YuE2-GGUF"
 REVISION = "e630f2b8f6aedf8254c3186438633c1b5eeaf80a"
@@ -18,6 +17,7 @@ FILES = {
 
 
 def main():
+    from huggingface_hub import hf_hub_download
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()

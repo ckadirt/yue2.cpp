@@ -1,6 +1,6 @@
 # Quality, balanced, and speed presets
 
-Status: **selection pending measurements**, 2026-11-09.
+Status: **initial measurements complete; final release validation pending**, 2026-11-09.
 
 The user's requirement is three meaningful presets, each selecting the right
 precision for every component. A low-bit option is acceptable only if it
@@ -28,8 +28,25 @@ different format/layout and must not be substituted into this fork.
 | Label | Main model | VAE | Decision |
 |---|---|---|---|
 | Quality | BF16 | F32 | Highest released precision; numerical reference |
-| Balanced | Q8_0 or Q6_K | F32 | Compare quality, stage latency, and memory |
-| Speed | Q5_K_M, Q6_K, or Q8_0 | F32 | Choose fastest acceptable measured combination |
+| Balanced | Q8_0 | F32 | Preferred: near BF16 numerically; faster than BF16 and essentially tied with Q6 |
+| Speed | Q5_K_M candidate | F32 | Validate a deliberate 16-step recipe; quantization alone gives only a small speed gain |
+
+Quality and balanced retain 32 midpoint steps. A speed recipe with 16 steps is
+an explicit solver setting, separate from its checkpoint precision. The 8-step
+option needs stronger quality evidence before becoming a default.
+
+The first isolated A10G matrix used 300 frames (12 seconds), direct conditioning,
+CFG 1, 32 steps, retained weights, and two exact-repeat warm runs. Warm times
+were BF16 **4.256 s**, Q8 **3.582 s**, Q6 **3.587 s**, and Q5 **3.439 s**.
+Q8's fixed-semantic latent relative L2 against BF16 was **0.01549**; Q6 and Q5
+were about **0.067**. Q5 changed one probe's top-logit choice, while Q8 and Q6
+kept it. These are diagnostic differences, not human judgments of a song.
+
+At 32 steps Q6 offers no measured latency benefit over Q8 and has appreciably
+larger latent differences. Q5 is only about 4% faster than Q8 in this short
+matrix. Thus the speed tier must be justified by its complete measured recipe.
+See [raw summary](measurements/matrix-01-summary.json). Full-duration memory,
+warm step-count comparisons, and multilingual review clips remain in progress.
 
 If optional transcription is included later: compare F32 MERT + F32 SheetSage2
 for quality, and matched Q8_0 files for smaller presets. This is a candidate
@@ -51,5 +68,5 @@ tested. Include warm/cold stage timings, peak VRAM, hashes, and retained outputs
 | `YuE2-3B-Q5_K_M.gguf` | 2622936832 | `cd3efd250b734a229172800f08f33a893ad1f66b521666e176cdae4a0729b281` |
 | `YuE2-Vae-F32.gguf` | 530497344 | `93e49dfb1970e89ad64cacb17cf13b5d05f6bb30ef7ed3adae3050bcb728638a` |
 
-Metadata was checked through the Hugging Face model API; local file hashes
-must still be verified after download.
+All five downloaded generation files were verified locally against these
+sizes and SHA-256 values on the persistent volume.

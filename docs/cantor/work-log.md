@@ -252,3 +252,28 @@
 - Found an unwanted NCCL dependency in the portable CUDA configuration.
   Explicitly disable it: Cantor's managed CUDA runtime supplies cudart/cuBLAS,
   not NCCL. Rebuild and audit dependencies before publication.
+
+## 2026-11-09 20:26 UTC — maximum-duration capacity and final adapter fixes
+
+- All three 9,000-frame / six-minute fixed-semantic stress cases passed with
+  retained weights and eight midpoint steps. Sampled device peaks: BF16
+  **12,519 MiB**, Q8 **9,251 MiB**, Q5 **8,137 MiB**. These are capacity cases,
+  not song-quality examples or isolated latency results. Receipts:
+  `/cantor/validation/yue2/stress-360-01-{BF16,Q8_0,Q5_K_M}`.
+- Proposed conservative catalog reservations: quality 16 GiB, balanced 12 GiB,
+  speed 10 GiB. Generation uses the shared lm+vae roles only.
+- Extracted the native percentile peak normalization into a shared helper and
+  applied it to ABI PCM. A prior Spanish clip peaked at 1.04; the host otherwise
+  clips samples directly. Preserve the native tool's output policy, with
+  default `peak_clip=10`, and reject invalid bounds and embedded NUL text.
+  CPU rebuild and both contract tests pass. GPU revalidation is still pending.
+- Corrected the step-sweep harness to warm weights and graphs **before every
+  comparison series**, then measure two exact-repeat runs per step count.
+  Earlier 32-step timing included cold graph setup; retain it as historical
+  data but do not compare it directly with warm 16/8-step timings.
+- Added explicit backend external-dependency auditing and manifest preparation
+  from pinned model assets and clean build receipts. Catalog fragments are
+  drafts until final recipe and packaged-engine validation pass.
+- Existing `/cantor/bin/cantor` is 0.2.10 and exports support for the duration
+  extension. Use a separate private test directory and loopback relay for the
+  final real-node check; leave the owner's normal node configuration untouched.
