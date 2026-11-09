@@ -204,3 +204,51 @@
 - CPU tests still pass. Next: commit/sync these focused changes, run fresh-
   process long/planning checks, then equal-control precision and reference
   comparisons. Do not publish preset claims before those measurements.
+
+## 2026-11-09 15:37 UTC — fresh-process long-stream check passed
+
+- **`70a8a7c`** pushed, CUDA adapter rebuilt, and both CPU/GPU contract tests
+  passed. Portable CPU CI passed at
+  https://github.com/ckadirt/yue2.cpp/actions/runs/42645566449.
+- `smoke-q8-fresh-long-01` passed with stochastic sampling, 300 frames,
+  cancellation at token 257, and new interpreter processes for each resume.
+  Completed CODES/DIFFUSE envelopes and decoded PCM are exactly equal to
+  uninterrupted output. Retained weights and changed-request checks pass.
+- Full score-planning fresh-process smoke is still running. Equal-control
+  four-precision matrix, separate 32/16/8-step sweep, and seven pinned-reference
+  probes are queued behind its successful completion. They have not passed yet.
+- Added portable Linux build recipe in **`0df59c6`**. CUDA uses
+  `75-virtual;80-virtual;86-real`, CPU runtime variants, and no OpenMP dependency.
+  A second build is queued after timing measurements. Do not distribute the
+  current SM86-only development binary as a general CUDA backend.
+- Prepared English/Spanish planned-song and empty-lyrics instrumental review
+  requests for all four precisions. Listening approval remains separate from
+  numeric diagnostics; no presets or artifacts have been published yet.
+- Original shutdown deadline remains unchanged. Current sandbox expires before
+  17:22:28 UTC; do not extend it or relaunch another three-hour session.
+
+## 2026-11-09 20:15 UTC — explicitly authorized second session
+
+- The previous sandbox expired. User explicitly requested another instance.
+  New A10G **`sb-HPDyMosvKKNkcy6HFxs0HV`**, 64 GiB host RAM, persistent
+  `cantor-node` volume. Hard timeout 10,800 seconds; client deadline
+  **2026-11-09 23:05:54 UTC / 19:05:54 Bolivia**. Stop earlier when finished.
+- Recovery found completed four-precision matrix and 32/16/8-step sweep,
+  both fresh-process smoke passes, and six successful reference probes.
+  Raw receipts/logs were copied locally under `artifacts/recovery-02/`.
+- Full-vocabulary `test-draw.py` fails 496/512 IDs on A10. Diagnosed and
+  reproduced the exact cause: PyTorch uses 110,592 CUDA threads for its
+  184,704-entry vocabulary, reusing Philox words through a grid-stride loop;
+  native upstream uses one stable subsequence per vocabulary ID. Compact
+  reference matched all 512 draws; 65,536 native draws had total variation
+  distance 0.013315 from the expected probabilities. The layout predictor
+  reproduced all 512 full-vocabulary PyTorch draws. Preserve native seed
+  behavior and document that equal-seed Torch generation is not promised.
+- BF16/Q8/Q6/Q5 warm 12-second pipelines: 4.256 / 3.582 / 3.587 / 3.439 s
+  at 32 steps. Q8 fixed-code latent relative L2 is 0.01549; Q6/Q5 about 0.067.
+  These are short synthetic-control measurements, not listening judgments.
+- English/Spanish/instrumental BF16 and Q8 review clips completed; Q6/Q5 were
+  interrupted and need completion.
+- Found an unwanted NCCL dependency in the portable CUDA configuration.
+  Explicitly disable it: Cantor's managed CUDA runtime supplies cudart/cuBLAS,
+  not NCCL. Rebuild and audit dependencies before publication.
