@@ -131,3 +131,31 @@
 - CPU rebuild/tests passed after those changes. Restricted local execution
   needs `CCACHE_DIR=/tmp/cantor-yue2-ccache` to avoid writing outside the allowed
   workspace. The source changes have not been pushed to GitHub yet.
+
+## 2026-11-09 — recovery verified; fork backed up
+
+- Recovery is live at **`sb-GMrcw2FVWis3eUe0Z71VP7`**, A10G / 64 GiB requested
+  host RAM. Receipt: `session.json`. Ready at **14:44:08 UTC**, with a
+  **9308-second** server lifetime; its conservative upper bound is 17:19:17 UTC,
+  before the original 17:22:28 deadline.
+- Verified the GGUF manifest, source checkout, official checkpoints, and
+  reference environment survived. Reference import reports Python 3.12.15,
+  NumPy 2.2.6, and **PyTorch 2.10.0+cu128**.
+- CUDA compilation resumed at `-j 2`; new log is
+  `/cantor/validation/yue2/build-cuda-recovery.log`. It has not completed yet.
+- **Pushed commits through `d23a566`** to
+  `https://github.com/ckadirt/yue2.cpp/tree/cantor-abi-v1` using the existing
+  volume credential via a temporary askpass helper. No token in git URLs/logs.
+- Added generation receipts with sampled device memory, semantic arrays,
+  acoustic arrays, and score export to the real-ABI harness.
+- Added a Linux archive packager and a read-only CPU ABI CI workflow. The
+  packager checks exports, matching GGML dependencies, relocatable RUNPATH,
+  and initializes the CPU backend after relocation in a clean interpreter.
+  Local Debug archive relocation passed; no release archive was published.
+- Fixed backend discovery for a dlopened library: resolve plugins beside the
+  engine DSO rather than assuming the host executable or working directory.
+  `GGML_BACKEND_PATH` in this GGML version denotes a library file, not a
+  directory, so the harness no longer sets it incorrectly.
+- CPU rebuild and both tests passed with the discovery fix. Next milestone:
+  commit/sync these changes, finish CUDA build, then run real-model smoke,
+  restart equivalence, and preset measurements.

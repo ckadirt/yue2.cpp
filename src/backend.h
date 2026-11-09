@@ -10,7 +10,16 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <filesystem>
 #include <thread>
+#ifdef _WIN32
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#include <windows.h>
+#else
+#include <dlfcn.h>
+#endif
 
 struct BackendPair {
     ggml_backend_t backend;
@@ -92,11 +101,31 @@ static void yue2_ggml_log(enum ggml_log_level level, const char * text, void * u
 // every translation unit of the binary sees the one main sets.
 inline const char * g_backend_device = NULL;
 
+// A dlopened Cantor engine cannot rely on the host executable's directory
+// or process cwd to locate its matching backend plugins.
+static std::string backend_binary_directory() {
+#ifdef _WIN32
+    HMODULE module = nullptr;
+    if (!GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+            reinterpret_cast<LPCSTR>(&backend_binary_directory), &module)) return {};
+    char path[32768];
+    DWORD length = GetModuleFileNameA(module, path, sizeof(path));
+    if (!length || length >= sizeof(path)) return {};
+    return std::filesystem::path(std::string(path, length)).parent_path().string();
+#else
+    Dl_info info{};
+    if (!dladdr(reinterpret_cast<void *>(&backend_binary_directory), &info) || !info.dli_fname) return {};
+    return std::filesystem::absolute(info.dli_fname).parent_path().string();
+#endif
+}
+
 // Install the log callback and load every backend, once per process.
 static void backend_load(void) {
     static const bool loaded = [] {
         ggml_log_set(yue2_ggml_log, nullptr);
-        ggml_backend_load_all();
+        const std::string directory = backend_binary_directory();
+        if (directory.empty()) ggml_backend_load_all();
+        else ggml_backend_load_all_from_path(directory.c_str());
         return true;
     }();
     (void) loaded;

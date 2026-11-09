@@ -1,5 +1,7 @@
 build/
 build-*/
+dist/
+artifacts/
 *.wav
 
 tests/*/

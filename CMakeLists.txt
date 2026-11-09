@@ -89,7 +89,7 @@ macro(link_ggml_backends target)
         target_compile_options(${target} PRIVATE -Wall -Wextra -Wshadow -Wconversion
                               -Wno-unused-parameter -Wno-unused-function -Wno-sign-conversion)
     endif()
-    target_link_libraries(${target} PRIVATE ggml Threads::Threads)
+    target_link_libraries(${target} PRIVATE ggml Threads::Threads ${CMAKE_DL_LIBS})
     if(TARGET ggml-base)
         target_link_libraries(${target} PRIVATE ggml-base)
     endif()

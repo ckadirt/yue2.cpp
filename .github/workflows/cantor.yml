@@ -1,0 +1,35 @@
+name: Cantor ABI
+
+on:
+  push:
+    branches: [cantor-abi-v1]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  cpu:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Configure portable CPU engine
+        run: >-
+          cmake -S . -B build-cantor -DCMAKE_BUILD_TYPE=Release
+          -DGGML_BACKEND_DL=ON -DGGML_NATIVE=OFF -DGGML_CPU_ALL_VARIANTS=ON
+          -DGGML_OPENMP=OFF
+      - name: Build and test the actual C ABI
+        run: |
+          cmake --build build-cantor --target cantor-engine test-cantor-abi test-cantor-checkpoint -j 2
+          ctest --test-dir build-cantor --output-on-failure
+      - name: Package and check relocated dependencies
+        run: >-
+          python3 tools/cantor/package_backend.py --build build-cantor --backend cpu
+          --output dist/yue2-engine-cpu-x86_64.tar.gz
+      - uses: actions/upload-artifact@v4
+        with:
+          name: yue2-engine-cpu-x86_64
+          path: dist/*

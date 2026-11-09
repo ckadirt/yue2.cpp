@@ -5,6 +5,9 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import struct
+import subprocess
+import threading
 import time
 import wave
 
@@ -25,9 +28,47 @@ Progress = C.CFUNCTYPE(None, C.c_int, C.c_int, C.c_int, C.c_void_p)
 Cancel = C.CFUNCTYPE(C.c_int, C.c_void_p)
 
 
+class GPUMemory:
+    """Sample device-wide memory at 200 ms intervals; no peak guarantee."""
+    def __init__(self):
+        self.peak_mib = None
+        self.stop = threading.Event()
+        self.thread = threading.Thread(target=self.sample, daemon=True)
+
+    def sample(self):
+        while not self.stop.is_set():
+            try:
+                result = subprocess.check_output(["nvidia-smi", "--query-gpu=memory.used",
+                    "--format=csv,noheader,nounits"], text=True, stderr=subprocess.DEVNULL, timeout=5)
+                value = int(result.splitlines()[0])
+                self.peak_mib = max(self.peak_mib or 0, value)
+            except (OSError, ValueError, subprocess.SubprocessError):
+                pass
+            self.stop.wait(0.2)
+
+    def __enter__(self):
+        self.thread.start()
+        return self
+
+    def __exit__(self, *args):
+        self.stop.set()
+        self.thread.join(timeout=6)
+
+
+def state_sections(blob):
+    """Diagnostic reader of this engine's private v1 envelope, not a host API."""
+    if blob[:8] != b"YUE2ST01":
+        raise ValueError("Unexpected checkpoint format")
+    count = struct.unpack_from("<I", blob, 16)[0]
+    sections = {}
+    for i in range(count):
+        kind, offset, size = struct.unpack_from("<I4xQQ", blob, 72 + i * 24)
+        sections[kind] = blob[offset:offset + size]
+    return sections
+
+
 class Engine:
     def __init__(self, library, model, vae, keep=False, tile=512):
-        os.environ["GGML_BACKEND_PATH"] = str(library.resolve().parent)
         self.lib = lib = C.CDLL(str(library.resolve()))
         lib.cantor_engine_load.argtypes = [C.POINTER(Component), C.c_size_t, C.POINTER(Options)]
         lib.cantor_engine_load.restype = C.c_void_p
@@ -102,18 +143,29 @@ def run(engine, request, directory):
     state = json.dumps(request, ensure_ascii=False).encode()
     (directory / "request.json").write_bytes(state)
     timings = []
-    for stage, name in [(2, "codes"), (3, "latents"), (4, "decode")]:
-        status, state, receipt = engine.stage(stage, state)
-        if status != 0:
-            raise AssertionError("Unexpected pause")
-        timings.append(receipt)
-        if stage != 4:
-            (directory / f"{name}.bin").write_bytes(state)
+    with GPUMemory() as gpu:
+        for stage, name in [(2, "codes"), (3, "latents"), (4, "decode")]:
+            status, state, receipt = engine.stage(stage, state)
+            if status != 0:
+                raise AssertionError("Unexpected pause")
+            timings.append(receipt)
+            if stage != 4:
+                (directory / f"{name}.bin").write_bytes(state)
+                sections = state_sections(state)
+                if stage == 2:
+                    np.save(directory / "semantic.npy", np.frombuffer(sections[3], "<i4") - 151853)
+                    effective = json.loads(sections[1])
+                    (directory / "effective-request.json").write_text(json.dumps(effective, indent=2, ensure_ascii=False) + "\n")
+                    if effective.get("abc"):
+                        (directory / "score.abc").write_text(effective["abc"])
+                else:
+                    np.save(directory / "latents.npy", np.frombuffer(sections[4], "<f4").reshape(-1, 64))
     audio = engine.audio()
     write_audio(directory, audio)
     result = {"stages": timings, "audio_seconds": audio.shape[1] / 48000,
               "pipeline_seconds": sum(t["seconds"] for t in timings),
               "audio_sha256": hashlib.sha256(audio.tobytes()).hexdigest(),
+              "sampled_device_peak_mib": gpu.peak_mib, "memory_sample_interval_seconds": 0.2,
               "peak_abs": float(np.abs(audio).max()), "rms": float(np.sqrt(np.square(audio).mean()))}
     (directory / "result.json").write_text(json.dumps(result, indent=2) + "\n")
     return result
