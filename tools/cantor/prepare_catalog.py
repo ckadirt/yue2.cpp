@@ -55,6 +55,8 @@ def main():
             backends.append({"backend": key[0], "arch": key[1], "os": key[2], "bytes": receipt["bytes"],
                 "sha256": receipt["sha256"],
                 "url": f"{args.backend_base}/{receipt['source_commit'][:12]}/{receipt['file']}"})
+        # Older Linux nodes ignore OS metadata and select the first arch match.
+        backends.sort(key=lambda artifact: artifact["os"] != "linux")
         (args.output / "backends-fragment.json").write_text(json.dumps(
             {"name": "yue2", "abi": 1, "backends": backends}, indent=2) + "\n")
     print(args.output)
