@@ -107,3 +107,27 @@
 - Local sandbox permissions changed during work. Modal reconnects require
   network-enabled execution; the authorized A10G and original deadline remain
   unchanged. No new compute session was launched.
+
+## 2026-11-09 — interrupted CUDA compilation; bounded recovery
+
+- The A10G sandbox disappeared from named lookup before the deadline.
+  Inspecting its exact ID returned **exit code 137** and no sandbox stderr.
+  This is consistent with a memory kill, but the provider did not supply a
+  more specific cause. CUDA compilation was near task 167/212 at the previous
+  check. No generation had started.
+- Official reference source and checkpoints finished downloading before that
+  interruption: `/cantor/repos/YuE` at `1116bea...`, and
+  `/cantor/repos/yue2.cpp/checkpoints/{YuE2-3B,YuE2-Vae}` at the revisions in
+  the inspection report. The reference environment install also completed.
+- Recovery script: `recover_session.py` in this directory. It refuses duplicate
+  mounts, reuses the cached CUDA image, requests A10G with **64 GiB host RAM**,
+  and limits startup to four minutes. Subsequent compilation must use `-j 2`.
+- **Original task deadline remains 17:22:28 UTC.** Recovery calculates a shorter
+  server timeout from that deadline with a five-minute reserve. It does not
+  start a fresh three-hour allowance. New receipt goes to `session.json`.
+- Hardened the checkpoint parser against an empty directory and added
+  checksummed malformed-directory tests for empty, overlapping, and overflowed
+  ranges. Device description is now part of resume runtime identity.
+- CPU rebuild/tests passed after those changes. Restricted local execution
+  needs `CCACHE_DIR=/tmp/cantor-yue2-ccache` to avoid writing outside the allowed
+  workspace. The source changes have not been pushed to GitHub yet.

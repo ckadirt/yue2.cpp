@@ -199,6 +199,7 @@ std::string hex_digest(const std::array<std::uint8_t, 32> & digest) {
 std::vector<std::uint8_t> encode(const std::array<char, 8> & magic, std::uint32_t stage,
                                  const std::vector<section> & sections) {
     if (stage == 0) throw std::invalid_argument("checkpoint stage must be nonzero");
+    if (sections.empty()) fail("checkpoint section directory is empty");
     if (sections.size() > std::numeric_limits<std::uint32_t>::max()) fail("too many checkpoint sections");
     std::uint64_t directory_bytes = 0;
     if (!checked_mul(static_cast<std::uint64_t>(sections.size()), section_entry_bytes, &directory_bytes)) {
@@ -254,6 +255,7 @@ decoded_blob decode(const std::uint8_t * bytes, std::size_t size, const std::arr
     const std::uint32_t stage = get_u32(bytes, 12);
     if (stage == 0) fail("blob stage is zero");
     const std::uint32_t section_count = get_u32(bytes, 16);
+    if (section_count == 0) fail("checkpoint section directory is empty");
     const std::uint32_t header_bytes = get_u32(bytes, 20);
     const std::uint64_t total_bytes = get_u64(bytes, 24);
     std::uint64_t directory_bytes = 0;
@@ -291,7 +293,7 @@ decoded_blob decode(const std::uint8_t * bytes, std::size_t size, const std::arr
         result.sections.push_back(std::move(entry));
     }
     std::sort(ranges.begin(), ranges.end(), [](const range & lhs, const range & rhs) { return lhs.begin < rhs.begin; });
-    for (std::size_t index = 1; index != ranges.size(); ++index) {
+    for (std::size_t index = 1; index < ranges.size(); ++index) {
         if (ranges[index - 1U].end > ranges[index].begin) fail("blob sections overlap");
     }
     return result;

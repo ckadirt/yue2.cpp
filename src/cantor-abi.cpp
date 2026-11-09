@@ -148,7 +148,9 @@ void configure(cantor_ctx & c) {
     }
 }
 std::string runtime(cantor_ctx & c) {
+    auto device = ggml_backend_get_device(c.pipe.kv_backend.backend);
     return std::string(YUE2_VERSION) + "/" + ggml_backend_name(c.pipe.kv_backend.backend) +
+        "/device=" + (device ? ggml_backend_dev_description(device) : "unknown") +
         "/fa=" + std::to_string(c.opts.disable_flash_attn) + "/threads=" + std::to_string(c.opts.n_threads) +
         "/tile=" + std::to_string(c.pipe.params.vae_core) + "/halo=" + std::to_string(c.pipe.params.vae_halo);
 }

@@ -1,4 +1,5 @@
 #include "cantor-checkpoint.h"
+#include <algorithm>
 #include <cassert>
 #include <stdexcept>
 #include <string>
@@ -21,4 +22,22 @@ int main() {
     auto corrupt = encoded; corrupt.back() ^= 1; rejects(corrupt);
     corrupt = encoded; corrupt[0] ^= 1; rejects(corrupt);
     corrupt = encoded; corrupt.push_back(0); rejects(corrupt);
+    auto put = [](std::vector<uint8_t> & b, size_t offset, uint64_t value, unsigned width) {
+        for (unsigned j = 0; j < width; ++j) b[offset + j] = uint8_t(value >> (j * 8));
+    };
+    auto seal = [](std::vector<uint8_t> & b) {
+        std::fill(b.begin() + 40, b.begin() + 72, 0);
+        auto digest = cp::sha256(b.data(), b.size());
+        std::copy(digest.begin(), digest.end(), b.begin() + 40);
+    };
+    // Correct checksums must not make malformed directories acceptable.
+    corrupt = encoded; corrupt.resize(72);
+    put(corrupt, 16, 0, 4); put(corrupt, 20, 72, 4); put(corrupt, 24, 72, 8);
+    seal(corrupt); rejects(corrupt);
+    corrupt = cp::encode(magic, 2, {{cp::section_kind::request_json, {1,2}},
+                                  {cp::section_kind::metadata, {3,4}}});
+    put(corrupt, 72 + 24 + 8, 120, 8); // second payload overlaps the first
+    seal(corrupt); rejects(corrupt);
+    corrupt = encoded; put(corrupt, 72 + 16, UINT64_MAX, 8);
+    seal(corrupt); rejects(corrupt);
 }
