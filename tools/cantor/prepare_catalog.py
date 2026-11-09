@@ -12,6 +12,7 @@ def main():
     parser.add_argument("--backend-receipt", type=Path, action="append", default=[])
     parser.add_argument("--backend-base", default="https://ckpts.cantorfm.com/backends")
     parser.add_argument("--speed-steps", type=int, default=16)
+    parser.add_argument("--weights-base", default="https://ckpts.cantorfm.com/yue2-1.0")
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=False)
     variants = []
@@ -23,7 +24,7 @@ def main():
                                            ("vae", "YuE2-Vae-F32.gguf", "F32")]:
             size, sha = FILES[filename]
             components.append({"role": role, "blob": f"sha256:{sha}",
-                "url": f"https://huggingface.co/{REPO}/resolve/{REVISION}/{filename}",
+                "url": f"{args.weights_base.rstrip('/')}/{filename}",
                 "bytes": size, "quant": precision})
         variants.append({"tag": f"3b-{tier}", "components": components,
             "defaults": {"steps": steps, "cfg": 1.0},
