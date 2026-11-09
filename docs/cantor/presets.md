@@ -1,6 +1,6 @@
 # Quality, balanced, and speed presets
 
-Status: **selected and validated; engine archives hosted**, 2026-11-09.
+Status: **live in Cantor**, 2026-11-09. [Merged registration](https://github.com/ckadirt/Cantor/pull/5).
 
 The user's requirement is three meaningful presets, each selecting the right
 precision for every component. A low-bit option is acceptable only if it
@@ -69,6 +69,12 @@ proxy, not a perceptual-quality guarantee. No human listening is claimed.
 English, Spanish and empty-lyrics instrumental clips were retained for each
 selected recipe. Six-minute supplied-code capacity checks passed on A10G;
 see [validation](validation.md) and [final measurements](measurements/release-25455ed-summary.json).
+
+A final full-pipeline quality run produced 359.9987 seconds in **320.23 s**
+from a cold context, using real score planning, 9,000 AR codes, and 32 solver
+steps. Its sampled peak was **12,969 MiB**, within the 16 GiB reservation.
+The semantic length was forced to the cap; this is sustained-generation
+evidence rather than a guarantee of a natural musical ending.
 
 If optional transcription is included later: compare F32 MERT + F32 SheetSage2
 for quality, and matched Q8_0 files for smaller presets. This is a candidate

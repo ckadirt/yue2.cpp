@@ -349,3 +349,26 @@
 - Remaining work: finish registration CI, merge/deploy, verify live manifests,
   record shutdown. No further GPU inference is needed. The session's enforced
   deadline remains **23:05:54 UTC**; stop it early after recovery notes are saved.
+
+## 2026-11-09 22:07 UTC — live registration verified; compute complete
+
+- All registration CI jobs passed, including Android and both supported macOS
+  runners: https://github.com/ckadirt/Cantor/actions/runs/42705072014.
+- PR #5 merged as **`841fcea11cdf4316feaf02037daf891c21fdd6e2`**. Deployment
+  succeeded: https://github.com/ckadirt/Cantor/actions/runs/42707918802.
+- Both live JSON manifests exactly match the reviewed files, including every
+  existing model/backend entry. Checked **22:05:48 UTC**; receipt is
+  `measurements/live-verification.json`. `cantor pull yue2:3b-balanced` is live.
+- Added one actual maximum-duration quality run while CI finished: **359.9987 s
+  audio in 320.2338 s**, with real planning, 9,000 generated AR codes, 32 steps,
+  F32-source VAE, and retained weights. Sampled peak **12,969 MiB**. Stage times:
+  CODES 149.4895 s, DIFFUSE 165.0409 s, DECODE 5.7035 s. Score was not truncated;
+  semantic length was forced to 9,000, so no natural-ending claim is made.
+  Result and WAV were copied locally and added to the listening index.
+- Final reports/recovery procedures were already pushed as **`0b9314f`**;
+  this final note adds live-publication and full-duration evidence. Native
+  release binaries remain pinned to **`25455ed8a916`**.
+- No further GPU work remains. After pushing this record, run the existing
+  session helper's `stop`, which syncs `/cantor` and terminates the sandbox.
+  The local `session.json` receipt will record the observed stop time. Do not
+  renew the allocation automatically.

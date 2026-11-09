@@ -2,8 +2,8 @@
 
 Updated: 2026-11-09. Status: implementation, normalized-output validation,
 fresh-process resume, reference checks, capacity tests, recipe selection and
-portable archive publication are complete. Cantor PR #5 registers the model;
-CI/merge/deployment verification remain. See `validation.md`, `presets.md`,
+portable archive publication are complete. Cantor PR #5 merged; CI and live
+deployment verification passed. See `validation.md`, `presets.md`,
 and the work log for exact evidence and limitations.
 
 ## Authorized scope and constraints
@@ -93,6 +93,6 @@ validated. Optional community tokenizers/adapters remain separate components.
 - Final CPU and CUDA engine source is `25455ed8a916`; both immutable archives
   are publicly hash-verified on R2. Real Cantor 0.2.10 install/load/generate passed.
 - An explicitly authorized three-hour A10G session ends no later than
-  2026-11-09 23:05:54 UTC. Compute is finished; stop early after saving notes.
+  2026-11-09 23:05:54 UTC. Compute is finished; shutdown follows the final log push.
 - Native supplied ABC works. App text extensions reject multiline input, so
   the catalog exposes score-mode choice and does not offer a broken ABC field.

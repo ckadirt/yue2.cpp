@@ -1,0 +1,38 @@
+{
+  "stages": [
+    {
+      "stage": 2,
+      "status": 0,
+      "seconds": 149.48945585099955,
+      "blob_sha256": "3078d9df648740194f9418743a22bd5b7224848ba4996ff1d9f9ec02b08bcaf2",
+      "blob_bytes": 55811,
+      "resident_modules": 1,
+      "resident_weight_bytes": 4332163072
+    },
+    {
+      "stage": 3,
+      "status": 0,
+      "seconds": 165.0408535309998,
+      "blob_sha256": "700f025cf63f76b37d28783e6948d641aebb286337ed7f22945ee11c03351848",
+      "blob_bytes": 2359814,
+      "resident_modules": 2,
+      "resident_weight_bytes": 7161217280
+    },
+    {
+      "stage": 4,
+      "status": 0,
+      "seconds": 5.703538604999267,
+      "blob_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "blob_bytes": 0,
+      "resident_modules": 3,
+      "resident_weight_bytes": 7294027776
+    }
+  ],
+  "audio_seconds": 359.9986666666667,
+  "pipeline_seconds": 320.2338479869986,
+  "audio_sha256": "cbf2724f7371a977044a1ad9510fe36c63200c16af70b960a874f86a0bbb271a",
+  "sampled_device_peak_mib": 12969,
+  "memory_sample_interval_seconds": 0.2,
+  "peak_abs": 1.0,
+  "rms": 0.12504740059375763
+}

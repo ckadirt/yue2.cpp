@@ -1,8 +1,9 @@
 # YuE2 validation evidence
 
 Updated 2026-11-09. Final CPU/CUDA engine validation passed; immutable archives
-are published and publicly hash-verified. Catalog registration is in
-[Cantor PR #5](https://github.com/ckadirt/Cantor/pull/5).
+are published and publicly hash-verified. [Cantor PR #5](https://github.com/ckadirt/Cantor/pull/5)
+merged as `841fcea11cdf4316feaf02037daf891c21fdd6e2`; deployment passed and both
+live manifests exactly matched the reviewed data on 2026-11-09 at 22:05 UTC.
 Full logs, private stage blobs, requests, and PCM are retained under
 `/cantor/validation/yue2`. A local evidence snapshot is in
 `yue2.cpp/artifacts/release-25455ed8a916/evidence/`. Private test-node keys and
@@ -60,6 +61,15 @@ these figures do not guarantee the absolute transient peak.
 | BF16 | 12,519 MiB | 16 GiB |
 | Q8_0 | 9,251 MiB | 12 GiB |
 | Q5_K_M | 8,137 MiB | 10 GiB |
+
+A final **full-pipeline** BF16/F32/32 quality run also passed: real automatic
+score planning, 9,000 generated AR codes, 32 midpoint steps, and decode produced
+**359.9987 seconds** of normalized stereo PCM in **320.2338 seconds** from a cold
+context. Stage times were CODES **149.4895 s**, DIFFUSE **165.0409 s**, DECODE
+**5.7035 s**. Sampled peak: **12,969 MiB**. Score planning ended naturally;
+semantic generation was forced to its 9,000-code cap, so this measures sustained
+generation and does not promise a natural musical ending. See the
+[complete-duration receipt](measurements/full-360-quality-result.json).
 
 The test host had 64 GiB RAM and four allocated CPUs. That supported CUDA
 compilation and CPU F32 reference models; it is not a measured minimum host-RAM
@@ -135,3 +145,9 @@ remains a native-API feature: the current shared app text-extension contract
 rejects newlines. Recording covers, singer references, and automatic lyric
 writing are not advertised. Initial distributed targets are Linux x86_64 CPU
 and CUDA 12. No macOS, Vulkan, or Windows engine is declared.
+
+Registration CI passed all jobs after the retired macOS 14 runner was moved to
+macOS 15. [Registration CI](https://github.com/ckadirt/Cantor/actions/runs/42705072014)
+and [successful deployment](https://github.com/ckadirt/Cantor/actions/runs/42707918802).
+The [live verification receipt](measurements/live-verification.json) checks both
+public manifests against the reviewed files, including all existing entries.
