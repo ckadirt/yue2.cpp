@@ -1,5 +1,8 @@
 name: Build & Release Binaries
 
+# Cantor ABI archives are released by cantor.yml; do not run legacy CLI
+# packaging against its immutable cantor-<commit> releases.
+
 on:
   release:
     types: [published]
@@ -32,7 +35,7 @@ jobs:
   build-linux:
     name: Build · linux-x64
     runs-on: ubuntu-22.04
-    if: github.event_name != 'workflow_dispatch' || !inputs.skip_linux
+    if: (github.event_name != 'workflow_dispatch' || !inputs.skip_linux) && !startsWith(github.event.release.tag_name, 'cantor-')
 
     steps:
       - name: Checkout
@@ -106,7 +109,7 @@ jobs:
   build-mac:
     name: Build · macos-arm64-metal
     runs-on: macos-latest
-    if: github.event_name != 'workflow_dispatch' || !inputs.skip_mac
+    if: (github.event_name != 'workflow_dispatch' || !inputs.skip_mac) && !startsWith(github.event.release.tag_name, 'cantor-')
 
     steps:
       - name: Checkout
@@ -171,7 +174,7 @@ jobs:
   build-windows:
     name: Build · windows-x64
     runs-on: windows-latest
-    if: github.event_name != 'workflow_dispatch' || !inputs.skip_windows
+    if: (github.event_name != 'workflow_dispatch' || !inputs.skip_windows) && !startsWith(github.event.release.tag_name, 'cantor-')
 
     steps:
       - name: Checkout
