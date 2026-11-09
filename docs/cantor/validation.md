@@ -138,7 +138,9 @@ test setup, not counted as an engine failure or a pass.
 Both public bodies matched the complete accepted SHA-256 hashes. Conditional
 R2 writes created new immutable keys; existing assets were not replaced.
 Weights stay at the pinned public upstream revision, with their original
-CC-BY-NC-4.0 terms. No new quantization or weight mirror was necessary.
+CC-BY-NC-4.0 terms. Existing quantizations were reused. **Weights were not
+mirrored to R2**; this remains a distribution gap for avoiding Hugging Face
+download limits. R2 publication covered the engine binaries only.
 
 The catalog exposes steps, guidance, and automatic score mode. Supplied ABC
 remains a native-API feature: the current shared app text-extension contract
@@ -151,3 +153,8 @@ macOS 15. [Registration CI](https://github.com/ckadirt/Cantor/actions/runs/42705
 and [successful deployment](https://github.com/ckadirt/Cantor/actions/runs/42707918802).
 The [live verification receipt](measurements/live-verification.json) checks both
 public manifests against the reviewed files, including all existing entries.
+
+For the exact boundary of node testing, CI coverage, RAM measurements, and
+distribution, see the [delivery audit](delivery-audit.md). The node test used
+Balanced/CUDA with two steps, loopback manifests, and pre-seeded model blobs;
+it was not a clean public-download test of every preset and platform.

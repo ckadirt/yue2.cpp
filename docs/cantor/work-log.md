@@ -372,3 +372,24 @@
   session helper's `stop`, which syncs `/cantor` and terminates the sandbox.
   The local `session.json` receipt will record the observed stop time. Do not
   renew the allocation automatically.
+
+## 2026-11-09 — delivery audit and visible local samples
+
+- Rechecked source, workflow, node harness, and original raw evidence in
+  response to the user's delivery checklist. Added `delivery-audit.md` with
+  explicit outstanding items: checkpoint R2 mirroring, additional native
+  platform/release jobs, every-preset public-download node tests, system RAM
+  measurement, and listening review.
+- Rechecked both live manifests at **22:22:55 UTC**; both still exactly match
+  reviewed registration. Saved `measurements/audit-live-verification.json`.
+- Corrected distribution wording: only engine archives were published to R2;
+  live checkpoint URLs still resolve through pinned upstream Hugging Face.
+- Confirmed real-node coverage is Balanced/CUDA, two steps, isolated local
+  manifests/archives and already verified model blobs; broader claims are not
+  supported. Native preset measurements remain separately valid.
+- Copied all nine selected-preset 30-second WAVs and the six-minute quality
+  WAV into workspace `audio-samples/yue2/`. Verified every copy's SHA-256 and
+  stereo 48 kHz WAV metadata. Added README, provenance manifest, HTML player.
+  The original ignored evidence files remain intact.
+- No allocation restarted. The previous GPU stopped successfully at about
+  **22:10 UTC**; `session.json` records the observed stop.

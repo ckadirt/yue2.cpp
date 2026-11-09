@@ -1,0 +1,13 @@
+{
+  "catalog": {
+    "url": "https://relay.cantorfm.com/catalog/v1.json",
+    "matches_reviewed_manifest": true,
+    "entries": 4
+  },
+  "backends": {
+    "url": "https://relay.cantorfm.com/backends/v1.json",
+    "matches_reviewed_manifest": true,
+    "entries": 4
+  },
+  "checked_utc": "2026-11-09T22:22:55.496917+00:00"
+}
