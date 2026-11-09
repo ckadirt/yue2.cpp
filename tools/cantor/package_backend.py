@@ -33,9 +33,10 @@ def main():
         parser.error("Unsupported platform/backend")
     repo = Path(__file__).resolve().parents[2]
     commit = output("git", "-C", str(repo), "rev-parse", "HEAD").strip()
-    dirty = bool(output("git", "-C", str(repo), "status", "--porcelain").strip())
+    status = output("git", "-C", str(repo), "status", "--porcelain").strip()
+    dirty = bool(status)
     if dirty and not args.allow_dirty:
-        parser.error("Refusing to package uncommitted source")
+        parser.error(f"Refusing to package uncommitted source: {status}")
     if args.output.exists():
         parser.error("Refusing to overwrite an archive")
     args.output.parent.mkdir(parents=True, exist_ok=True)

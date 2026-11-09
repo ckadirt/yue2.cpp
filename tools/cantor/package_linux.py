@@ -24,9 +24,10 @@ def main():
         raise SystemExit("Refusing to replace an existing backend archive")
     source_root = Path(__file__).resolve().parents[2]
     commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=source_root, text=True).strip()
-    dirty = bool(subprocess.check_output(["git", "status", "--porcelain"], cwd=source_root, text=True).strip())
+    status = subprocess.check_output(["git", "status", "--porcelain"], cwd=source_root, text=True).strip()
+    dirty = bool(status)
     if dirty and not args.allow_dirty:
-        raise SystemExit("Refusing to package uncommitted source; commit it or use --allow-dirty for local checks")
+        raise SystemExit(f"Refusing to package uncommitted source: {status}")
     build = args.build.resolve()
     files = [build / "libcantor_engine.so"]
     files += sorted(build.glob("libggml-yue2.so*"))
