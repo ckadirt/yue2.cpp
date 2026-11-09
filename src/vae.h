@@ -474,7 +474,10 @@ static int vae_ggml_decode_tiled(VAEGGML *     m,
                                  int           core_frames = 1024,
                                  int           halo_frames = 16,
                                  bool (*cancel)(void *)    = nullptr,
-                                 void * cancel_data        = nullptr) {
+                                 void * cancel_data        = nullptr,
+                                 void (*progress)(int, int, void *) = nullptr) {
+    if (core_frames < 1 || halo_frames < 0 || T_latent < 1) return -1;
+    if (cancel && cancel(cancel_data)) return -1;
     int total = T_latent * 1920 - 64;
     if (total > max_T_audio) {
         fprintf(stderr, "[VAE] T_audio %d exceeds max %d\n", total, max_T_audio);
@@ -483,7 +486,9 @@ static int vae_ggml_decode_tiled(VAEGGML *     m,
 
     // Short sequence: decode directly
     if (T_latent <= core_frames) {
-        return vae_ggml_decode(m, latent, T_latent, audio_out, max_T_audio);
+        int result = vae_ggml_decode(m, latent, T_latent, audio_out, max_T_audio);
+        if (result >= 0 && progress) progress(1, 1, cancel_data);
+        return result;
     }
 
     int num_tiles = (T_latent + core_frames - 1) / core_frames;
@@ -521,6 +526,7 @@ static int vae_ggml_decode_tiled(VAEGGML *     m,
         ggml_backend_tensor_get(m->graph_output, audio_out + out_start, crop * sizeof(float), core_len * sizeof(float));
         ggml_backend_tensor_get(m->graph_output, audio_out + max_T_audio + out_start, (tile_T + crop) * sizeof(float),
                                 core_len * sizeof(float));
+        if (progress) progress(i + 1, num_tiles, cancel_data);
     }
 
     // Compact ch1 from offset max_T_audio to offset total

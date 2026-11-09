@@ -53,3 +53,32 @@
 4. Build CUDA on the persistent checkout and verify downloaded model hashes.
 5. Validate deterministic restart and quantization matrix; update these notes
    with actual results and commit each coherent milestone.
+
+## 2026-11-09 — A10G ready; initial CPU checks passed
+
+- Terminated stalled L4 `sb-aPAp5uOKX5qEsFlqqPRfbb`; launcher exited after
+  termination. No L4 container was observed allocated.
+- A10G allocated promptly: `sb-KAOORLiKNJml5mm4SnCh8D`.
+  `nvidia-smi` confirms **NVIDIA A10, 23028 MiB**.
+- Server-side lifetime: **10,800 seconds**. Client receipt time
+  `2026-11-09T14:22:28.615230Z`; shutdown no later than
+  **2026-11-09 17:22:28 UTC / 13:22:28 America/La_Paz**. Stop earlier on
+  completion. Receipt: `../gpu/.codex/yue2-session.json`.
+- Confirmed persistent checkout is clean. Credential variable names are
+  `HF_TOKEN`, `GH_KEY`, and R2 connection variables. Values remain private.
+- First documentation commit: `7e74f39` on local `cantor-abi-v1`.
+- Implemented initial ABI wrapper and shared-library build, staged CODES /
+  DIFFUSE / DECODE, private state codec, progress/cancellation hooks, and
+  optional duration accessor. This implementation still needs GPU validation.
+- CPU Debug build succeeded. CTest: **2/2 passed** (ABI invalid-input/lifecycle
+  checks; checkpoint SHA-256 known vector, round trip, truncation/corruption).
+  These are weightless checks, not numerical or full-model validation.
+- ELF inspection confirms only `cantor_engine_*` exports, `$ORIGIN` RUNPATH,
+  and family-specific `libggml-yue2.so.0` / `libggml-base-yue2.so.0` dependencies.
+- Pinned download/verification script added at
+  `yue2.cpp/tools/cantor/download_models.py`; running on the GPU session with
+  files under `/cantor/models/yue2-source` and output at
+  `/cantor/validation/yue2/download.log`. Completion not yet verified.
+- Next: sync committed code to persistent checkout, CUDA build, verify all
+  downloads, then exercise real generation and restart equivalence before
+  selecting or publishing presets.

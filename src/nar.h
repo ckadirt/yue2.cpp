@@ -526,7 +526,9 @@ static bool nar_solve(Yue2NAR *            n,
                       int                  steps,
                       const DebugDumper *  dbg,
                       bool (*cancelled)(void *) = nullptr,
-                      void * cancel_data        = nullptr) {
+                      void * cancel_data        = nullptr,
+                      int * completed_steps = nullptr,
+                      void (*progress)(int, int, void *) = nullptr) {
     size_t             count = (size_t) n->latent_dim * T_lat * M;
     std::vector<float> first(count), mid(count), second(count);
     float              dt = 1.0f / (float) steps;
@@ -534,7 +536,9 @@ static bool nar_solve(Yue2NAR *            n,
 
     debug_dump_2d(dbg, "noise", state, T_lat, n->latent_dim);
     Timer solve_timer;
-    for (int step = 0; step < steps; step++) {
+    const int first_step = completed_steps ? *completed_steps : 0;
+    if (first_step < 0 || first_step > steps) return false;
+    for (int step = first_step; step < steps; step++) {
         Timer step_timer;
         if (cancelled && cancelled(cancel_data)) {
             fprintf(stderr, "[NAR] Cancelled at step %d\n", step);
@@ -557,6 +561,8 @@ static bool nar_solve(Yue2NAR *            n,
         for (size_t i = 0; i < count; i++) {
             state[i] -= second[i] * dt;
         }
+        if (completed_steps) *completed_steps = step + 1;
+        if (progress) progress(step + 1, steps, cancel_data);
         snprintf(name, sizeof(name), "nar_step%d_first", step);
         debug_dump_2d(dbg, name, first.data(), T_lat, n->latent_dim);
         snprintf(name, sizeof(name), "nar_step%d_second", step);

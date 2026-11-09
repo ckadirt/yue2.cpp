@@ -25,6 +25,15 @@ struct Yue2Generation {
     bool             truncated;  // the budget ran out before the end token
 };
 
+// A durable single-song cursor. Rebuild the cache using the same one-token
+// forwards as the interrupted run; bulk-prefilling sampled history changes
+// rounding and can change the next sampled token.
+struct Yue2ARResume {
+    Yue2Generation generated = { {}, true };
+    int step = 0;
+    int owed = -1;
+};
+
 // Prefill set s with a prefix, or copy the set of an equal prefix already
 // prefilled below it. The logits are the LM head rows [row0, row0 + rows).
 static void yue2_prefill(Qwen3LM *                             lm,
@@ -66,9 +75,16 @@ static bool yue2_generate(Qwen3LM *                             lm,
                           Yue2Phase                             phase,
                           std::vector<Yue2Generation> *         out,
                           bool (*cancelled)(void *) = nullptr,
-                          void * cancel_data        = nullptr) {
+                          void * cancel_data        = nullptr,
+                          Yue2ARResume * resume = nullptr,
+                          void (*progress)(int, int, void *) = nullptr) {
     const int B       = (int) prefixes.size();
     const int context = kv->cfg.max_seq_len;
+    if (resume && (B != 1 || resume->step < 0 || resume->step > s.max_tokens + 1 ||
+                   resume->owed < -1 || resume->owed > 1 ||
+                   resume->generated.tokens.size() > (size_t) s.max_tokens)) {
+        return false;
+    }
     bool      guided  = cfg_scale != 1.0f;
     if (guided && (int) negatives.size() != B) {
         fprintf(stderr, "[AR] FATAL: guidance %.3f needs an unconditional prefix per sequence\n", (double) cfg_scale);
@@ -125,9 +141,25 @@ static bool yue2_generate(Qwen3LM *                             lm,
     std::vector<int>           tokens(N);
     std::vector<float>         mixed(guided ? (size_t) rows : 0);
     std::vector<Yue2Candidate> candidates;
-    int                        step = 0;
+    int                        step = resume ? resume->step : 0;
+    if (resume) {
+        (*out)[0] = resume->generated;
+        owed[0] = resume->owed;
+        for (int replay = 0; replay < step; ++replay) {
+            const int token = (size_t) replay < resume->generated.tokens.size()
+                ? resume->generated.tokens[(size_t) replay] : end;
+            std::fill(tokens.begin(), tokens.end(), token);
+            qw3lm_forward_batch(lm, kv, tokens.data(), kv_sets.data(), N, batched.data(), row0, rows);
+        }
+    }
     for (;; step++) {
+        if (progress) progress(std::min(step, s.max_tokens), s.max_tokens, cancel_data);
         if (cancelled && cancelled(cancel_data)) {
+            if (resume) {
+                resume->step = step;
+                resume->owed = owed[0];
+                resume->generated = (*out)[0];
+            }
             fprintf(stderr, "[AR] Cancelled at step %d\n", step);
             return false;
         }
