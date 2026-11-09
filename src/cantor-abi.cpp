@@ -66,7 +66,7 @@ struct State {
     Yue2ARResume ar;
     int phase = 0; // 0 score, 1 semantic, 2 codes complete
     int frame = 0, step = 0;
-    bool done = false, score_truncated = false;
+    bool done = false, score_truncated = false, semantic_truncated = false, planned_score = false;
 };
 Yue2Request parse_request(const uint8_t * bytes, size_t size) {
     auto doc = document(bytes, size);
@@ -104,6 +104,7 @@ Yue2Request parse_request(const uint8_t * bytes, size_t size) {
     require(!r.style.empty(), "style/caption is required");
     require(r.cot == "full" || r.cot == "melody" || r.cot == "off", "invalid cot mode");
     require(r.abc.empty() || r.cot != "off", "ABC requires full or melody mode");
+    if (!r.semantic_tokens.empty() && r.abc.empty()) r.cot = "off";
     require(std::isfinite(r.duration) && r.duration >= 0.04f && r.duration <= 360, "duration must be in [0.04,360]");
     require(r.steps >= 1 && r.steps <= 200, "steps must be in [1,200]");
     require(std::isfinite(r.cfg_scale) && (r.cfg_scale == -1 || (r.cfg_scale >= 0 && r.cfg_scale <= 20)), "invalid guidance scale");
@@ -167,6 +168,8 @@ std::vector<uint8_t> save(cantor_ctx & c, const State & s, cantor_stage stage) {
     yyjson_mut_obj_add_int(doc.get(), root, "ar_owed", s.ar.owed);
     yyjson_mut_obj_add_bool(doc.get(), root, "ar_truncated", s.ar.generated.truncated);
     yyjson_mut_obj_add_bool(doc.get(), root, "score_truncated", s.score_truncated);
+    yyjson_mut_obj_add_bool(doc.get(), root, "semantic_truncated", s.semantic_truncated);
+    yyjson_mut_obj_add_bool(doc.get(), root, "planned_score", s.planned_score);
     yyjson_mut_obj_add_bool(doc.get(), root, "done", s.done);
     char * json = yyjson_mut_write(doc.get(), 0, nullptr);
     if (!json) throw std::bad_alloc();
@@ -207,6 +210,7 @@ State restore(cantor_ctx & c, const uint8_t * bytes, size_t size, uint32_t * sta
         require(yyjson_is_bool(v), "missing checkpoint boolean"); return yyjson_get_bool(v); };
     s.ar.generated.truncated = boolean("ar_truncated"); s.done = boolean("done");
     s.score_truncated = boolean("score_truncated");
+    s.semantic_truncated = boolean("semantic_truncated"); s.planned_score = boolean("planned_score");
     require(s.phase >= 0 && s.phase <= 2 && s.frame >= 0 && s.frame <= int(s.codes.size()) &&
             s.step >= 0 && s.step <= s.request.steps && s.ar.step >= 0 && s.ar.step <= 9001 &&
             s.ar.owed >= -1 && s.ar.owed <= 1, "invalid checkpoint cursor");
@@ -255,6 +259,15 @@ bool codes(cantor_ctx & c, State & s, Call & call) {
         s.abc = cot == YUE2_COT_OFF ? std::vector<int>{} : encode(r.abc); s.phase = 1;
         require(s.abc.size() <= 4096, "supplied score exceeds the 4096-token score boundary");
     }
+    call.total = (s.planned_score ? r.abc_sampling.max_tokens : 0) + r.semantic_sampling.max_tokens;
+    if (!r.semantic_tokens.empty()) {
+        std::vector<int> values;
+        require(pipeline_parse_tokens(r.semantic_tokens, &values) && values.size() <= size_t(r.semantic_sampling.max_tokens),
+                "invalid supplied semantic stream");
+        s.codes.clear(); for (int id : values) s.codes.push_back(id + YUE2_CODEC_OFFSET);
+        s.phase = 2; s.done = true; s.ar = {};
+        return true;
+    }
     Qwen3LM * lm = require_lm(&p, {});
     if (!lm) throw std::runtime_error("AR model load failed");
     ModelHandle hold(c.store, lm);
@@ -269,19 +282,16 @@ bool codes(cantor_ctx & c, State & s, Call & call) {
         s.phase = 1; s.ar = {};
     }
     auto prefix = yue2_build_prompt_ids(encode, cot, r.style, r.lyrics, cot == YUE2_COT_OFF ? nullptr : &s.abc);
+    call.offset = s.planned_score ? r.abc_sampling.max_tokens : 0;
     const float guidance = r.cfg_scale < 0 ? yue2_default_guidance(cot) : r.cfg_scale;
     std::vector<std::vector<int>> negative;
     if (guidance != 1) negative.push_back(yue2_build_negative_ids(encode, cot, cot == YUE2_COT_OFF ? nullptr : &s.abc));
-    if (!r.semantic_tokens.empty()) {
-        std::vector<int> values;
-        require(pipeline_parse_tokens(r.semantic_tokens, &values) && values.size() <= size_t(r.semantic_sampling.max_tokens),
-                "invalid supplied semantic stream");
-        s.codes.clear(); for (int id : values) s.codes.push_back(id + YUE2_CODEC_OFFSET);
-    } else {
+    {
         bool ok = yue2_generate(lm, &p.kv, {prefix}, negative, guidance, r.semantic_sampling, r.lm_seed,
             YUE2_PHASE_SEMANTIC, &generated, Call::cancelled, &call, &s.ar, Call::report);
         s.codes = ok ? generated[0].tokens : s.ar.generated.tokens;
         if (!ok) { if (call.stopped) return false; throw std::runtime_error("semantic generation failed"); }
+        s.semantic_truncated = generated[0].truncated;
     }
     require(!s.codes.empty(), "empty semantic stream"); s.phase = 2; s.done = true; s.ar = {};
     return true;
@@ -393,6 +403,7 @@ cantor_status cantor_engine_run_stage(cantor_ctx * c, cantor_stage stage, const 
         if (!packet) {
             require(stage == CANTOR_STAGE_CODES, "stage requires a YuE2 state envelope");
             state.request = parse_request(input, size);
+            state.planned_score = state.request.cot != "off" && state.request.abc.empty();
         }
         configure(*c);
         StageScope stage_scope{*c};

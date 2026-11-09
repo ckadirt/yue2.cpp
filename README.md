@@ -1,5 +1,11 @@
 # yue2.cpp
 
+This Cantor fork adds a staged ABI v1 shared library. Integration and model
+validation are in progress on branch `cantor-abi-v1`; see
+[the plan and work log](docs/cantor/README.md) and
+[the ABI contract](docs/cantor/ABI.md). The upstream CLI and server remain
+available below. A successful source build is not a validated model release.
+
 Local YuE2 song generation server with browser UI, powered by GGML.
 Style tags and lyrics in, complete stereo 48kHz songs out, with the
 symbolic score the model wrote on the way.

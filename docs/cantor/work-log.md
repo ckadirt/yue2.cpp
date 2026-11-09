@@ -159,3 +159,27 @@
 - CPU rebuild and both tests passed with the discovery fix. Next milestone:
   commit/sync these changes, finish CUDA build, then run real-model smoke,
   restart equivalence, and preset measurements.
+
+## 2026-11-09 — CUDA build and first inference
+
+- CUDA build finished and its weightless CTest suite passed **2/2**.
+  The CPU CI run also passed:
+  `https://github.com/ckadirt/yue2.cpp/actions/runs/42639895538`.
+- First GPU smoke produced finite 48 kHz stereo audio and reported equal
+  resumed outputs, but its cancellation helper emitted a Python callback
+  exception when progress was still an empty list. **Do not count that run as
+  clean validation.** Retained artifacts/log: `/cantor/validation/yue2/smoke-q8-01*`.
+- Fixed callback return typing and require evidence that the requested pause
+  boundary was actually reached. Added a stochastic mode to exercise absolute
+  Philox positions, not just greedy token selection.
+- Added monotonic progress checks. Adapter CODES progress now accounts for
+  both planning and semantic phases instead of resetting the same stage's
+  counter when planning completes.
+- Supplied semantic replay without ABC now correctly uses direct conditioning
+  and skips unnecessary AR weight loading; it does not plan a new unrelated
+  score. Added explicit score/semantic truncation indicators to saved state.
+- Added `benchmark_matrix.py` for equal-control BF16/Q8/Q6/Q5 comparisons and
+  `step_sweep.py` to measure step-count changes separately. Neither has run yet.
+- CPU rebuild and both tests passed after these changes. Next: commit/sync,
+  rebuild only the adapter, rerun clean greedy and stochastic GPU smoke,
+  then run numeric reference and preset comparisons on an otherwise idle GPU.

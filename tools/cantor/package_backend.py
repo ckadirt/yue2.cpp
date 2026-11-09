@@ -22,6 +22,7 @@ def main():
     if args.output.exists():
         raise SystemExit("Refusing to replace an existing backend archive")
     source_root = Path(__file__).resolve().parents[2]
+    commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=source_root, text=True).strip()
     dirty = bool(subprocess.check_output(["git", "status", "--porcelain"], cwd=source_root, text=True).strip())
     if dirty and not args.allow_dirty:
         raise SystemExit("Refusing to package uncommitted source; commit it or use --allow-dirty for local checks")
@@ -63,6 +64,8 @@ def main():
 root=sys.argv[1]
 engine=C.CDLL(os.path.join(root,'libcantor_engine.so'))
 assert engine.cantor_engine_abi_version()==1
+engine.cantor_engine_version.restype=C.c_char_p
+assert engine.cantor_engine_version().decode().startswith(sys.argv[2][:7]), 'stale engine build identifier'
 core=C.CDLL(os.path.join(root,'libggml-yue2.so.0'))
 core.ggml_backend_load_all_from_path.argtypes=[C.c_char_p]
 core.ggml_backend_load_all_from_path(os.fsencode(root))
@@ -76,14 +79,14 @@ core.ggml_backend_free(cpu)
         env = dict(os.environ)
         env.pop("GGML_BACKEND_PATH", None)
         env.pop("LD_LIBRARY_PATH", None)
-        subprocess.run([os.sys.executable, "-c", check, str(root)], env=env, cwd="/tmp", check=True)
+        subprocess.run([os.sys.executable, "-c", check, str(root), commit], env=env, cwd="/tmp", check=True)
         with tarfile.open(args.output, "x:gz") as archive:
             for file in sorted(root.iterdir()):
                 archive.add(file, arcname=file.name, recursive=False)
     receipt = {"family": "yue2", "abi": 1, "backend": args.backend, "arch": "x86_64",
                "file": args.output.name, "bytes": args.output.stat().st_size, "source_dirty": dirty,
                "sha256": hashlib.sha256(args.output.read_bytes()).hexdigest(),
-               "source_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=source_root, text=True).strip()}
+               "source_commit": commit}
     args.output.with_suffix(args.output.suffix + ".json").write_text(json.dumps(receipt, indent=2) + "\n")
     print(json.dumps(receipt))
 

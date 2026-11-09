@@ -99,7 +99,7 @@ class Engine:
             progress.append((s, done, total))
         def stop(_):
             return int(cancel_at is not None and (cancel_at == 0 or
-                (progress and progress[-1][1] >= cancel_at)))
+                (bool(progress) and progress[-1][1] >= cancel_at)))
         on_progress, on_cancel = Progress(report), Cancel(stop)
         source = C.create_string_buffer(data)
         output, length = C.c_void_p(), C.c_size_t()
@@ -111,6 +111,10 @@ class Engine:
         self.lib.cantor_engine_free_blob(output)
         if status < 0:
             raise RuntimeError(self.lib.cantor_engine_last_error().decode())
+        if any(done < 0 or total < 1 or done > total for _, done, total in progress):
+            raise AssertionError("Invalid progress bounds")
+        if any(b[1] < a[1] for a, b in zip(progress, progress[1:])):
+            raise AssertionError("Stage progress moved backwards")
         receipt = {"stage": stage, "status": status, "seconds": elapsed, "progress": progress,
                    "blob_sha256": hashlib.sha256(blob).hexdigest(), "blob_bytes": len(blob),
                    "resident_modules": self.lib.cantor_engine_resident_modules(self.ctx),
@@ -155,6 +159,7 @@ def run(engine, request, directory):
                 if stage == 2:
                     np.save(directory / "semantic.npy", np.frombuffer(sections[3], "<i4") - 151853)
                     effective = json.loads(sections[1])
+                    (directory / "generation-status.json").write_text(json.dumps(json.loads(sections[5]), indent=2) + "\n")
                     (directory / "effective-request.json").write_text(json.dumps(effective, indent=2, ensure_ascii=False) + "\n")
                     if effective.get("abc"):
                         (directory / "score.abc").write_text(effective["abc"])
@@ -174,7 +179,7 @@ def run(engine, request, directory):
 def smoke(args):
     request = {"caption": "English, warm piano pop, clear lead vocal", "lyrics": "[Verse]\nHello morning light",
                "cot": "off", "duration": 1.0, "seed": 42, "inference_steps": 2,
-               "semantic_sampling": {"temperature": 0, "min_tokens": 25, "max_tokens": 25}}
+               "semantic_sampling": {"temperature": 1 if args.stochastic else 0, "min_tokens": 25, "max_tokens": 25}}
     make = lambda keep=False: Engine(args.library, args.model, args.vae, keep, tile=16)
     engine = make()
     try:
@@ -190,6 +195,8 @@ def smoke(args):
             status, checkpoint, paused = engine.stage(stage, source, cancel_at)
             if status != 1:
                 raise AssertionError(f"Stage {stage} did not pause")
+            if not paused["progress"] or paused["progress"][-1][1] < cancel_at:
+                raise AssertionError(f"Stage {stage} paused before the requested boundary")
             (args.output / f"paused-{stage}.bin").write_bytes(checkpoint)
         finally:
             engine.close()
@@ -233,6 +240,7 @@ def main():
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--request", type=Path)
     parser.add_argument("--smoke", action="store_true")
+    parser.add_argument("--stochastic", action="store_true", help="Exercise absolute sampler positions in smoke checks")
     parser.add_argument("--keep-loaded", action="store_true")
     args = parser.parse_args()
     args.output.parent.mkdir(parents=True, exist_ok=True)
