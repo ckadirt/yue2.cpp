@@ -47,11 +47,11 @@ def main():
             receipt = json.loads(path.read_text())
             if receipt["family"] != "yue2" or receipt["abi"] != 1 or receipt["source_dirty"]:
                 raise ValueError("Backend receipt is not a clean YuE2 ABI-1 build")
-            key = receipt["backend"], receipt["arch"]
+            key = receipt["backend"], receipt["arch"], receipt.get("os", "linux")
             if key in seen:
                 raise ValueError("Duplicate backend/architecture")
             seen.add(key)
-            backends.append({"backend": key[0], "arch": key[1], "bytes": receipt["bytes"],
+            backends.append({"backend": key[0], "arch": key[1], "os": key[2], "bytes": receipt["bytes"],
                 "sha256": receipt["sha256"],
                 "url": f"{args.backend_base}/{receipt['source_commit'][:12]}/{receipt['file']}"})
         (args.output / "backends-fragment.json").write_text(json.dumps(

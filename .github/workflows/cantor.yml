@@ -45,12 +45,21 @@ jobs:
         with:
           version: 1.4.309.0
           cache: true
+      - name: Install pinned SPIR-V headers and CMake config
+        if: matrix.backend == 'vulkan'
+        shell: bash
+        run: |
+          git clone https://github.com/KhronosGroup/SPIRV-Headers.git "$RUNNER_TEMP/spirv-source"
+          git -C "$RUNNER_TEMP/spirv-source" checkout 09913f088a1197aba4aefd300a876b2ebbaa3391
+          cmake -S "$RUNNER_TEMP/spirv-source" -B "$RUNNER_TEMP/spirv-build" -DCMAKE_INSTALL_PREFIX="$RUNNER_TEMP/spirv"
+          cmake --install "$RUNNER_TEMP/spirv-build" --config Release
       - name: Configure portable engine
         shell: bash
         run: >-
           cmake -S . -B build-cantor -DCMAKE_BUILD_TYPE=Release
           -DGGML_BACKEND_DL=ON -DGGML_NATIVE=OFF -DGGML_OPENMP=OFF
-          -DGGML_METAL=OFF -DGGML_ACCELERATE=OFF ${{ matrix.flags }}
+          -DGGML_METAL=OFF -DGGML_ACCELERATE=OFF
+          '-DCMAKE_PREFIX_PATH=${{ runner.temp }}/spirv' ${{ matrix.flags }}
       - name: Build and test the actual C ABI
         shell: bash
         run: |

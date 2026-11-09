@@ -47,7 +47,7 @@ def main():
     prefix, suffix = ("", ".dll") if windows else ("lib", "*.dylib")
     files = [build / name]
     for stem in ["ggml-yue2", "ggml-base-yue2", "ggml-cpu*"]:
-        matches = sorted(build.glob(prefix + stem + suffix))
+        matches = sorted(build.glob((prefix + stem + suffix).replace("**", "*")))
         if not matches:
             parser.error(f"Missing {stem} library")
         files += matches

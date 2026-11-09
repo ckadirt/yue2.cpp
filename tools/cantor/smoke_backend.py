@@ -25,8 +25,10 @@ core.ggml_backend_init_by_type.argtypes = [C.c_int, C.c_char_p]
 core.ggml_backend_init_by_type.restype = C.c_void_p
 cpu = core.ggml_backend_init_by_type(0, None)
 assert cpu, "Relocated CPU dispatch failed"
-core.ggml_backend_free.argtypes = [C.c_void_p]
-core.ggml_backend_free(cpu)
+base_name = {"win32": "ggml-base-yue2.dll", "darwin": "libggml-base-yue2.dylib"}.get(sys.platform, "libggml-base-yue2.so.0")
+base = C.CDLL(str(root / base_name))
+base.ggml_backend_free.argtypes = [C.c_void_p]
+base.ggml_backend_free(cpu)
 if sys.argv[3] != "cpu":
     plugin = {"cuda12": "cuda", "metal": "metal", "vulkan": "vulkan"}[sys.argv[3]]
     filename = {"win32": f"ggml-{plugin}.dll", "darwin": f"libggml-{plugin}.dylib"}.get(sys.platform, f"libggml-{plugin}.so")
