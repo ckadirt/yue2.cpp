@@ -1,32 +1,34 @@
-# YuE2 integration workspace
+# YuE2 for Cantor
 
-This directory is the durable working record for bringing `ckadirt/yue2.cpp`
-to the same Cantor ABI and distribution contract as the existing engines.
+The fork implements Cantor engine ABI 1 with CODES → DIFFUSE → DECODE.
+Validated Linux x86_64 CPU/CUDA binaries are built from `25455ed8a916`.
 
-- [Plan and acceptance criteria](plan.md)
-- [Checkpoint preset decisions](presets.md)
-- [Work log and recovery instructions](work-log.md)
-- [Validation evidence](validation.md)
-- [Delivery audit: completed work and remaining gaps](delivery-audit.md)
+- [Selected presets and timings](presets.md)
+- [Validation, artifacts, and limitations](validation.md)
+- [Delivery audit and remaining gaps](delivery-audit.md)
+- [Native ABI contract](ABI.md)
+- [Implementation plan](plan.md)
+- [Recovery log](work-log.md)
 - [Model inspection](../yue2-model-inspection.md)
 
-Implementation checkout: `../../yue2.cpp`, branch `cantor-abi-v1`.
-Remote persistent checkout: `/cantor/repos/yue2.cpp` on Modal volume
-`cantor-node`, mounted at `/cantor`. Private credentials: `/cantor/keys/.env`.
-Only paths and credential names may appear in these records; never values.
+Generation uses the published MoT `lm` file plus the F32 VAE. Quality is BF16
+with 32 steps; balanced is Q8_0 with 32; speed is Q5_K_M with 16. Native supplied
+ABC works; the app catalog currently exposes automatic score mode because its
+text-extension contract rejects multiline input. Audio covers and lyric writing
+are not advertised.
 
-Keep the plan and work log current at each coherent implementation commit.
-Copy these records into the fork's `docs/cantor/` directory so the record itself
-is committed and recoverable. Preserve test outputs and generation artifacts
-on the persistent volume, with concise results and paths in the work log.
+The `ops/` scripts preserve this task's recovery and publication procedure.
+They read credentials from `/cantor/keys/.env` at runtime and never embed them.
+Another GPU launch requires fresh user authorization; never renew an expired
+three-hour allocation automatically.
 
-Validated binary source: `25455ed8a916`. CPU/CUDA archives are publicly hosted;
-the selected recipes and measured timings are in the preset/validation reports.
-Local listening index: `../../yue2.cpp/artifacts/release-25455ed8a916/SAMPLES.md`.
-Visible local copies: [audio-samples/yue2](../../audio-samples/yue2/README.md),
-with an [HTML audio player](../../audio-samples/yue2/index.html).
+Full requests, state, numeric outputs, and WAVs remain on the persistent Modal
+volume under `/cantor/validation/yue2`. Local copies are under
+`artifacts/release-25455ed8a916/`; `SAMPLES.md` there is a listening index.
+These generated audio artifacts are intentionally not tracked in Git.
+
 Registration: https://github.com/ckadirt/Cantor/pull/5.
 
-The Python operations helpers are recovery records for this authorized task.
-Starting another GPU session requires fresh user authorization; expiration is
-not permission to renew a three-hour allocation automatically.
+For this local multi-repo workspace, visible WAV copies and an HTML player
+are also at `../audio-samples/yue2/` relative to the repository root.
+R2 currently hosts engine archives only; GGUF weight URLs still use Hugging Face.

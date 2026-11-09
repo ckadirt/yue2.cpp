@@ -34,8 +34,8 @@ public-download end-to-end testing.
 - Node test implementation: `verify_node.py`; raw logs and result are at
   `yue2.cpp/artifacts/release-25455ed8a916/evidence/node-release-04/`.
   Its result records `relay: loopback only` and reused immutable model bytes.
-- [Local samples](../../audio-samples/yue2/README.md),
-  [local audio player](../../audio-samples/yue2/index.html).
+- Local samples: workspace `audio-samples/yue2/README.md` and
+  `audio-samples/yue2/index.html` (a sibling of this repository).
 
 ## Remaining work for the broader release described by the user
 
