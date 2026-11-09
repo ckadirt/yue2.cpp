@@ -28,7 +28,7 @@ def main():
                 "bytes": size, "quant": precision})
         variants.append({"tag": f"3b-{tier}", "components": components,
             "defaults": {"steps": steps, "cfg": 1.0},
-            "needs": {"vram_bytes": memory * 1024**3, "backends": ["cuda12", "cpu"]},
+            "needs": {"vram_bytes": memory * 1024**3, "backends": ["cuda12", "metal", "vulkan", "cpu"]},
             "stages": ["codes", "diffuse", "decode"],
             "lyrics": {"can_generate": False, "requires_lyrics": False, "instrumental_text": ""},
             "parameters": [
