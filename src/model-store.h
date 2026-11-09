@@ -120,6 +120,10 @@ BPETokenizer * store_bpe(ModelStore * s, const char * lm_path);
 size_t store_vram_bytes(const ModelStore * s);
 int    store_gpu_module_count(const ModelStore * s);
 
+// Drop request graphs and scratch while retaining weight-owning modules.
+// Call only after releasing all ModelHandles, before freeing the request KV.
+void store_clear_request_state(ModelStore * s);
+
 // RAII helper. Builds on top of store_release, nothing else.
 struct ModelHandle {
     ModelStore * store;

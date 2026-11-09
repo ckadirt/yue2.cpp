@@ -1,7 +1,7 @@
 # Implementation plan
 
-Updated: 2026-11-09. Status: initial adaptation in progress; no ABI build or
-generation has passed yet.
+Updated: 2026-11-09. Status: initial ABI adapter builds on CPU and its two
+weightless tests pass. CUDA build and full-model validation remain in progress.
 
 ## Authorized scope and constraints
 
@@ -77,8 +77,10 @@ validated. Optional community tokenizers/adapters remain separate components.
 
 - Local fork cloned at upstream `5a9500fd2979ab99fc82895877aadf8583acbabb`.
 - Branch `cantor-abi-v1`; upstream remote configured.
-- Draft token-resume/progress, midpoint-resume/progress, VAE progress, and CPU
-  thread hooks exist but have not been compiled or tested.
-- Generic checkpoint codec and ABI header copied from the existing MiniMax
-  adapter with retained Apache license. ABI wrapper and build wiring remain
-  to be written. These are incomplete changes, not a working engine.
+- Token-resume/progress, midpoint-resume/progress, VAE progress, and CPU thread
+  hooks compile with the ABI wrapper and family-specific shared libraries.
+- Generic checkpoint codec and ABI header reuse the existing MiniMax adapter
+  with its retained Apache license. CPU ABI/checkpoint tests pass.
+- A10G session is ready; all five generation GGUF files are hash-verified.
+- Added retained-weight request-state cleanup and a real-ABI Python harness;
+  GPU restart equivalence and numerical parity are not established yet.

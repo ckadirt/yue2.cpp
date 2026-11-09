@@ -237,6 +237,13 @@ struct Call {
         if (c.progress) c.progress(c.stage, c.offset + done, c.total ? c.total : total, c.data);
     }
 };
+struct StageScope {
+    cantor_ctx & c;
+    ~StageScope() {
+        store_clear_request_state(c.store);
+        qw3lm_kv_free(&c.pipe.kv);
+    }
+};
 bool codes(cantor_ctx & c, State & s, Call & call) {
     auto & p = c.pipe; auto & r = s.request;
     BPETokenizer * tok = store_bpe(c.store, c.lm_path.c_str());
@@ -386,7 +393,7 @@ cantor_status cantor_engine_run_stage(cantor_ctx * c, cantor_stage stage, const 
             state.request = parse_request(input, size);
         }
         configure(*c);
-        KvScope kv_scope{&c->pipe};
+        StageScope stage_scope{*c};
         if (packet) state = restore(*c, input, size, &saved_stage);
         c->duration = state.request.duration;
         Call call{stage, progress, cancel, userdata};

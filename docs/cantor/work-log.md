@@ -82,3 +82,28 @@
 - Next: sync committed code to persistent checkout, CUDA build, verify all
   downloads, then exercise real generation and restart equivalence before
   selecting or publishing presets.
+
+## 2026-11-09 — verified assets and retained-weight cleanup
+
+- All five GGUF downloads completed and passed exact size/SHA-256 checks.
+  Receipt: `/cantor/models/yue2-source/cantor-source-manifest.json`.
+- Initial adapter commit `e1a273e` and its planning parent were transferred
+  as a git bundle to `/cantor/repos/yue2.cpp`; remote branch `cantor-abi-v1`.
+  GitHub push has not yet been verified.
+- CUDA build uses `build-cuda`, CUDA 12.8.1, architecture 86, RelWithDebInfo,
+  and dynamically loaded CPU/CUDA backends. Logs:
+  `/cantor/validation/yue2/{cmake-cuda,build-cuda,ctest-cuda}.log`.
+  At the last check, CUDA compilation had reached 147/212 tasks; no completion
+  claim yet.
+- PyTorch 2.10.0 cu128 and pinned reference dependencies installed under
+  `/cantor/venvs/yue2-reference`; install log retained on the volume.
+- Retained modules now have an explicit request-graph/scratch cleanup before
+  freeing request KV, so `keep_loaded` retains weights without stale request
+  references. CPU rebuild and both weightless tests passed again.
+- Added `tools/cantor/verify_engine.py`: runs through the actual exported C
+  ABI, saves requests/stage blobs/audio/timing receipts, and checks context-
+  recreation resume for CODES, DIFFUSE, and DECODE, plus two requests with
+  retained weights. This harness has only been syntax-checked so far.
+- Local sandbox permissions changed during work. Modal reconnects require
+  network-enabled execution; the authorized A10G and original deadline remain
+  unchanged. No new compute session was launched.

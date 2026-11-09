@@ -399,3 +399,41 @@ int store_gpu_module_count(const ModelStore * s) {
     }
     return (int) s->gpu.size();
 }
+
+void store_clear_request_state(ModelStore * s) {
+    if (!s) return;
+    for (auto & item : s->gpu) {
+        auto & entry = item.second;
+        assert(entry.refcount == 0);
+        if (item.first.kind == MODEL_LM) {
+            auto * m = static_cast<Qwen3LM *>(entry.ptr);
+            static_graph_release(&m->batch_graph.graph, m->sched);
+            ggml_backend_sched_reset(m->sched);
+            m->batch_graph = {};
+            if (m->arena_batch.ctx) ggml_reset(m->arena_batch.ctx);
+            if (m->arena_prefill.ctx) ggml_reset(m->arena_prefill.ctx);
+        } else if (item.first.kind == MODEL_NAR) {
+            auto * m = static_cast<Yue2NAR *>(entry.ptr);
+            ggml_backend_sched_reset(m->sched);
+            if (m->arena.ctx) ggml_reset(m->arena.ctx);
+            if (m->input_ctx) {
+                ggml_backend_buffer_free(m->input_buf);
+                ggml_free(m->input_ctx);
+                m->input_ctx = nullptr; m->input_buf = nullptr;
+            }
+            m->graph_T = m->graph_M = m->graph_ar = m->graph_set = 0;
+            m->graph = nullptr;
+            std::vector<float>().swap(m->scratch_x);
+            std::vector<float>().swap(m->scratch_pos_emb);
+            std::vector<int32_t>().swap(m->scratch_pos);
+        } else if (item.first.kind == MODEL_VAE) {
+            auto * m = static_cast<VAEGGML *>(entry.ptr);
+            ggml_backend_sched_reset(m->sched);
+            if (m->graph_ctx) { ggml_free(m->graph_ctx); free(m->graph_buf); }
+            m->graph_ctx = nullptr; m->graph_buf = nullptr;
+            m->graph = nullptr; m->graph_input = nullptr; m->graph_output = nullptr;
+            m->graph_T = 0;
+            std::vector<float>().swap(m->scratch_in);
+        }
+    }
+}
