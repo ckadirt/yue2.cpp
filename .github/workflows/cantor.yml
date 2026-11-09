@@ -5,31 +5,118 @@ on:
     branches: [cantor-abi-v1]
   pull_request:
   workflow_dispatch:
+    inputs:
+      publish_release:
+        description: 'Publish passing archives as a commit-pinned GitHub release'
+        type: boolean
+        default: false
 
 permissions:
   contents: read
 
 jobs:
-  cpu:
-    runs-on: ubuntu-22.04
+  native:
+    name: '${{ matrix.os }} / ${{ matrix.arch }} / ${{ matrix.backend }}'
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {runner: ubuntu-22.04, os: linux, arch: x86_64, backend: cpu, flags: '-DGGML_CPU_ALL_VARIANTS=ON'}
+          - {runner: ubuntu-24.04-arm, os: linux, arch: arm64, backend: cpu, flags: ''}
+          - {runner: ubuntu-22.04, os: linux, arch: x86_64, backend: vulkan, flags: '-DGGML_VULKAN=ON -DGGML_CPU_ALL_VARIANTS=ON'}
+          - {runner: macos-15, os: macos, arch: arm64, backend: cpu, flags: ''}
+          - {runner: macos-15, os: macos, arch: arm64, backend: metal, flags: '-DGGML_METAL=ON -DGGML_METAL_EMBED_LIBRARY=ON'}
+          - {runner: macos-15-intel, os: macos, arch: x86_64, backend: cpu, flags: ''}
+          - {runner: windows-2022, os: windows, arch: x86_64, backend: cpu, flags: ''}
+          - {runner: windows-2022, os: windows, arch: x86_64, backend: vulkan, flags: '-DGGML_VULKAN=ON'}
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
-      - name: Configure portable CPU engine
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: ilammy/msvc-dev-cmd@v1
+        if: runner.os == 'Windows'
+      - uses: humbletim/install-vulkan-sdk@v1.2
+        if: matrix.backend == 'vulkan'
+        with:
+          version: 1.4.309.0
+          cache: true
+      - name: Configure portable engine
+        shell: bash
         run: >-
           cmake -S . -B build-cantor -DCMAKE_BUILD_TYPE=Release
-          -DGGML_BACKEND_DL=ON -DGGML_NATIVE=OFF -DGGML_CPU_ALL_VARIANTS=ON
-          -DGGML_OPENMP=OFF
+          -DGGML_BACKEND_DL=ON -DGGML_NATIVE=OFF -DGGML_OPENMP=OFF
+          -DGGML_METAL=OFF -DGGML_ACCELERATE=OFF ${{ matrix.flags }}
       - name: Build and test the actual C ABI
+        shell: bash
+        run: |
+          cmake --build build-cantor --config Release --target cantor-engine test-cantor-abi test-cantor-checkpoint -j 3
+          ctest --test-dir build-cantor -C Release --output-on-failure
+      - name: Package and check relocated dependencies
+        shell: bash
+        run: >-
+          python tools/cantor/package_backend.py --build build-cantor --backend ${{ matrix.backend }}
+          --output dist/yue2-engine-${{ matrix.os }}-${{ matrix.backend }}-${{ matrix.arch }}.tar.gz
+      - uses: actions/upload-artifact@v4
+        with:
+          name: yue2-engine-${{ matrix.os }}-${{ matrix.backend }}-${{ matrix.arch }}
+          path: dist/*
+          if-no-files-found: error
+  cuda:
+    name: linux / x86_64 / cuda12
+    runs-on: ubuntu-22.04
+    container: nvidia/cuda:12.8.1-devel-ubuntu22.04
+    timeout-minutes: 90
+    steps:
+      - name: Install build dependencies
+        run: apt-get update -qq && apt-get install -y -qq git cmake ninja-build build-essential python3
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Configure portable CUDA engine
+        run: >-
+          cmake -S . -B build-cantor -G Ninja -DCMAKE_BUILD_TYPE=Release
+          -DGGML_BACKEND_DL=ON -DGGML_NATIVE=OFF -DGGML_CPU_ALL_VARIANTS=ON
+          -DGGML_OPENMP=OFF -DGGML_CUDA=ON -DGGML_CUDA_NCCL=OFF
+          '-DCMAKE_CUDA_ARCHITECTURES=75-virtual;80-virtual;86-real'
+      - name: Build and test ABI without GPU hardware
         run: |
           cmake --build build-cantor --target cantor-engine test-cantor-abi test-cantor-checkpoint -j 2
           ctest --test-dir build-cantor --output-on-failure
-      - name: Package and check relocated dependencies
+      - name: Package relocated CUDA engine
         run: >-
-          python3 tools/cantor/package_backend.py --build build-cantor --backend cpu
-          --output dist/yue2-engine-cpu-x86_64.tar.gz
+          python3 tools/cantor/package_backend.py --build build-cantor --backend cuda12
+          --output dist/yue2-engine-linux-cuda12-x86_64.tar.gz
       - uses: actions/upload-artifact@v4
         with:
-          name: yue2-engine-cpu-x86_64
+          name: yue2-engine-linux-cuda12-x86_64
           path: dist/*
+          if-no-files-found: error
+  release:
+    name: Publish commit-pinned archives
+    if: github.event_name == 'workflow_dispatch' && inputs.publish_release
+    needs: [native, cuda]
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: yue2-engine-*
+          path: dist
+          merge-multiple: true
+      - name: Publish immutable release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="cantor-${GITHUB_SHA}"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo "Release already exists; refusing to replace its assets."
+            exit 1
+          fi
+          gh release create "$tag" dist/* --target "$GITHUB_SHA" --title "Cantor ABI ${GITHUB_SHA:0:12}" --notes "Native ABI, checkpoint, dependency and relocated-library checks passed. These CI runners do not establish model generation on each accelerator. R2 promotion and catalog registration are separate verified steps."
