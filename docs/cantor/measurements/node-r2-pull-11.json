@@ -1,0 +1,47 @@
+{
+  "passed": true,
+  "fresh_empty_store": true,
+  "commands": [
+    {
+      "command": [
+        "pull",
+        "yue2:3b-quality"
+      ],
+      "exit_code": 0,
+      "seconds": 129.42356323800004
+    },
+    {
+      "command": [
+        "pull",
+        "yue2:3b-balanced"
+      ],
+      "exit_code": 0,
+      "seconds": 66.86627493099991
+    },
+    {
+      "command": [
+        "pull",
+        "yue2:3b-fast"
+      ],
+      "exit_code": 0,
+      "seconds": 51.05828656299991
+    },
+    {
+      "command": [
+        "backends",
+        "--install",
+        "--use",
+        "cpu"
+      ],
+      "exit_code": 0,
+      "seconds": 0.01838310400012233
+    }
+  ],
+  "unique_model_blobs": 4,
+  "download_bytes": 14129738592,
+  "weights_and_engine_urls": "public R2",
+  "manifest_urls": "reviewed candidates served over loopback",
+  "generation": "not requested",
+  "relay": "loopback only",
+  "identity_checks": "Cantor verifies content-addressed SHA-256 during every new download"
+}

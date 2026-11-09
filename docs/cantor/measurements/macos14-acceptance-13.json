@@ -1,0 +1,106 @@
+{
+  "ready": true,
+  "scope": "Only listed passing native CI packages; no generation assertion",
+  "source_commit": "9061e660d79babd8accecd25b441f4179c26b7db",
+  "workflow_run": "https://github.com/ckadirt/yue2.cpp/actions/runs/42722149204",
+  "artifacts": {
+    "yue2-engine-macos-cpu-arm64.tar.gz": "471aa2113c182bef42ae117c93fe2158ac42d31aab0783c8f968d3328bb76a6e",
+    "yue2-engine-linux-cpu-x86_64.tar.gz": "12a77e70acd4cc6d4515f87f9c5d5b252d9121f7b3169e638f548e23f451d0f3",
+    "yue2-engine-linux-cpu-arm64.tar.gz": "ae689d4d004dee177d28b42bfb04ef76a61eae75d6adf9e86c6a8c3bd07d5592",
+    "yue2-engine-macos-cpu-x86_64.tar.gz": "dd67d7f3e74c15c33d7372cf6aebc8296ff4fd8c3546b0e54647d4a863ec0cb7",
+    "yue2-engine-macos-metal-arm64.tar.gz": "5cc2ca5932dc3c84911db6ab371eaf8f76654f062b14173a5603a80eb5df34fe",
+    "yue2-engine-windows-cpu-x86_64.tar.gz": "1210790ca845d6da3e6fe45bc9a16fcb53eab0c560f79e7f9a20acb26c2e0e87"
+  },
+  "packages": [
+    {
+      "file": "yue2-engine-macos-cpu-arm64.tar.gz",
+      "job": "macos / arm64 / cpu",
+      "artifact_id": 13721536140,
+      "bytes": 1628677,
+      "sha256": "471aa2113c182bef42ae117c93fe2158ac42d31aab0783c8f968d3328bb76a6e"
+    },
+    {
+      "file": "yue2-engine-linux-cpu-x86_64.tar.gz",
+      "job": "linux / x86_64 / cpu",
+      "artifact_id": 13720758260,
+      "bytes": 7768423,
+      "sha256": "12a77e70acd4cc6d4515f87f9c5d5b252d9121f7b3169e638f548e23f451d0f3"
+    },
+    {
+      "file": "yue2-engine-linux-cpu-arm64.tar.gz",
+      "job": "linux / arm64 / cpu",
+      "artifact_id": 13720627382,
+      "bytes": 1833133,
+      "sha256": "ae689d4d004dee177d28b42bfb04ef76a61eae75d6adf9e86c6a8c3bd07d5592"
+    },
+    {
+      "file": "yue2-engine-macos-cpu-x86_64.tar.gz",
+      "job": "macos / x86_64 / cpu",
+      "artifact_id": 13720207909,
+      "bytes": 1860244,
+      "sha256": "dd67d7f3e74c15c33d7372cf6aebc8296ff4fd8c3546b0e54647d4a863ec0cb7"
+    },
+    {
+      "file": "yue2-engine-macos-metal-arm64.tar.gz",
+      "job": "macos / arm64 / metal",
+      "artifact_id": 13720167594,
+      "bytes": 2676262,
+      "sha256": "5cc2ca5932dc3c84911db6ab371eaf8f76654f062b14173a5603a80eb5df34fe"
+    },
+    {
+      "file": "yue2-engine-windows-cpu-x86_64.tar.gz",
+      "job": "windows / x86_64 / cpu",
+      "artifact_id": 13720102462,
+      "bytes": 916419,
+      "sha256": "1210790ca845d6da3e6fe45bc9a16fcb53eab0c560f79e7f9a20acb26c2e0e87"
+    }
+  ],
+  "jobs": [
+    {
+      "name": "linux / x86_64 / cuda12",
+      "status": "in_progress",
+      "conclusion": null
+    },
+    {
+      "name": "linux / x86_64 / vulkan",
+      "status": "in_progress",
+      "conclusion": null
+    },
+    {
+      "name": "windows / x86_64 / vulkan",
+      "status": "in_progress",
+      "conclusion": null
+    },
+    {
+      "name": "linux / arm64 / cpu",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "macos / arm64 / cpu",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "linux / x86_64 / cpu",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "macos / x86_64 / cpu",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "windows / x86_64 / cpu",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "macos / arm64 / metal",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "checked_utc": "2026-11-09T23:43:15.976980+00:00"
+}

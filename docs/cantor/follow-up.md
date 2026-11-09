@@ -69,3 +69,36 @@ quality. This is user listening feedback, not a formal blind evaluation.
   Vulkan SDK folder, and macOS's exported static yyjson symbols (ABI-only export
   list). Linux implementation/numerics remain unchanged. Documentation-only
   pushes no longer trigger the entire matrix.
+
+## 2026-11-09 23:50 UTC — mirror and fresh pulls complete; rollout pending CI
+
+- All five pinned GGUFs, original LICENSE/README and a provenance manifest are
+  public under `https://ckpts.cantorfm.com/yue2-1.0/`. Complete public SHA-256
+  and byte-range checks passed. Local receipt `measurements/weights-published-08.json`.
+- Real Cantor 0.2.10 pulled **all three presets from an empty store**, using
+  actual public R2 model/backend URLs. Four unique blobs: **14,129,738,592 bytes**.
+  Quality/Balanced/Speed pulls took 129.42/66.87/51.06 s; CPU installation passed.
+  Candidate manifests/relay were loopback; no new generation was requested.
+- Receipt: `measurements/node-r2-pull-11.json`. Raw logs are also local under
+  `yue2.cpp/artifacts/distribution-20261109/node-r2-pull-11/`, with private config
+  excluded. Removed only this test's duplicate `models/` after successful checks;
+  source weights at `/cantor/models/yue2-source/` remain intact.
+- Native matrix source **9061e660d79babd8accecd25b441f4179c26b7db**, run
+  https://github.com/ckadirt/yue2.cpp/actions/runs/42722149204: eight targets
+  passed; hosted CUDA compilation remains in progress. Do not call it passed yet.
+- Published Linux ARM CPU (d43af5015d85), Linux Vulkan (7fd3f2455e86), Windows
+  CPU (d43af5015d85), Windows Vulkan (4800780c7bd9), and corrected macOS CPU/Metal
+  (9061e660d79b). Their public hashes are in `measurements/`.
+- Initial Mac archives required 15.0. Held deployment, rebuilt for Cantor's
+  14.0 target, and added a fatal check of every packaged library's Mach-O
+  minimum OS. New Mac archives passed; the catalog proposal uses only those.
+- Cantor PR #6, current head **6e1f4befea49d2f4c0f5c16b67371da42881761a**:
+  R2 model URLs; Linux ARM/Vulkan and Mac CPU/Metal; tested Linux CPU/CUDA
+  unchanged. Linux entries stay first for old nodes ignoring OS metadata.
+  Remaining: finish exact-head registration CI, merge/deploy, verify live URLs.
+- Windows native builds do not mean Windows node support. Mac default backend
+  release-manifest wiring also remains separate. `host-gaps.md` contains concrete
+  proposals awaiting user approval. Do not implement those under this task.
+- CPU sandbox **sb-01M7197YE2XRAKHFB7WXES6JAF** still runs; hard three-hour
+  timeout, conservative stop target **02:10:03 UTC**. No GPU allocated. Stop
+  early once persistent/local recovery records are safe and remote work ends.

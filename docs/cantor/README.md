@@ -8,6 +8,7 @@ Validated Linux x86_64 CPU/CUDA binaries are built from `25455ed8a916`.
 - [Delivery audit and remaining gaps](delivery-audit.md)
 - [Current distribution follow-up](follow-up.md)
 - [Native platform delivery](platforms.md)
+- [Host gaps requiring separate approval](host-gaps.md)
 - [Native ABI contract](ABI.md)
 - [Implementation plan](plan.md)
 - [Recovery log](work-log.md)

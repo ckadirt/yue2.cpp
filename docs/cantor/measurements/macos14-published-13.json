@@ -1,0 +1,20 @@
+[
+  {
+    "url": "https://ckpts.cantorfm.com/backends/9061e660d79b/yue2-engine-macos-cpu-arm64.tar.gz",
+    "bytes": 1628677,
+    "sha256": "471aa2113c182bef42ae117c93fe2158ac42d31aab0783c8f968d3328bb76a6e",
+    "public_verified": true
+  },
+  {
+    "url": "https://ckpts.cantorfm.com/backends/9061e660d79b/yue2-engine-macos-cpu-x86_64.tar.gz",
+    "bytes": 1860244,
+    "sha256": "dd67d7f3e74c15c33d7372cf6aebc8296ff4fd8c3546b0e54647d4a863ec0cb7",
+    "public_verified": true
+  },
+  {
+    "url": "https://ckpts.cantorfm.com/backends/9061e660d79b/yue2-engine-macos-metal-arm64.tar.gz",
+    "bytes": 2676262,
+    "sha256": "5cc2ca5932dc3c84911db6ab371eaf8f76654f062b14173a5603a80eb5df34fe",
+    "public_verified": true
+  }
+]
