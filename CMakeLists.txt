@@ -132,6 +132,9 @@ set_target_properties(cantor-engine PROPERTIES OUTPUT_NAME cantor_engine
 if(CMAKE_SYSTEM_NAME MATCHES "Linux|FreeBSD")
     target_link_options(cantor-engine PRIVATE "-Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/cantor_engine.map")
     set_property(TARGET cantor-engine APPEND PROPERTY LINK_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/cantor_engine.map)
+elseif(APPLE)
+    target_link_options(cantor-engine PRIVATE "-Wl,-exported_symbols_list,${CMAKE_CURRENT_SOURCE_DIR}/cantor_engine.exports")
+    set_property(TARGET cantor-engine APPEND PROPERTY LINK_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/cantor_engine.exports)
 endif()
 link_ggml_backends(cantor-engine)
 

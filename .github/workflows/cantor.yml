@@ -3,6 +3,17 @@ name: Cantor ABI
 on:
   push:
     branches: [cantor-abi-v1]
+    paths:
+      - '.github/workflows/cantor.yml'
+      - '.gitignore'
+      - 'CMakeLists.txt'
+      - 'cantor_engine.*'
+      - 'ggml'
+      - 'src/**'
+      - 'include/**'
+      - 'tests/**'
+      - 'tools/cantor/package*.py'
+      - 'tools/cantor/smoke_backend.py'
   pull_request:
   workflow_dispatch:
     inputs:
@@ -13,6 +24,10 @@ on:
 
 permissions:
   contents: read
+
+concurrency:
+  group: cantor-abi-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   native:
