@@ -124,3 +124,21 @@ quality. This is user listening feedback, not a formal blind evaluation.
   do not claim that last build passed until its final result is observed.
 - No remote compute needs restarting to finish CI monitoring or report updates.
   Host changes proposed in `host-gaps.md` remain unimplemented pending approval.
+
+## 2026-11-10 00:31 UTC — CUDA compile passed; CI packaging environment fixed
+
+- Run **42722149204** completed CUDA compilation (428 Ninja steps) and both
+  real ABI/checkpoint tests passed. Packaging then failed before producing an
+  archive because Git rejected the container checkout's ownership. No failed
+  or unverified archive was promoted; the deployed CUDA archive is unchanged.
+- Fixed the container setup in **57692e2**: explicitly trust only the checked-out
+  workspace and its ggml submodule, then verify exact HEAD and a clean status
+  before spending time on compilation. This also ensures generated engine
+  version metadata can read Git successfully.
+- Added a bounded 2 GiB ccache with best-effort restore/save, including save on
+  failure, so future retries can reuse compiled kernels. No cache contains
+  keys or model weights. Cache operations cannot hide build/test failures.
+- A fresh full native CI run is starting on this correction. Continue until
+  CUDA packaging and the native matrix genuinely pass; do not report the failed
+  run as passing. All R2/catalog/real-node follow-up checks are already live and
+  verified. No remote compute needs restarting to finish GitHub CI.
