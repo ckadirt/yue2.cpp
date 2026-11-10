@@ -107,17 +107,34 @@ jobs:
     runs-on: ubuntu-22.04
     container: nvidia/cuda:12.8.1-devel-ubuntu22.04
     timeout-minutes: 90
+    env:
+      CCACHE_DIR: /tmp/yue2-cuda-ccache
+      CCACHE_MAXSIZE: 2G
     steps:
       - name: Install build dependencies
-        run: apt-get update -qq && apt-get install -y -qq git cmake ninja-build build-essential python3
+        run: apt-get update -qq && apt-get install -y -qq git cmake ninja-build build-essential python3 ccache
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+      - name: Verify trusted container checkout before compiling
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git config --global --add safe.directory "$GITHUB_WORKSPACE/ggml"
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test -z "$(git status --porcelain)"
+      - uses: actions/cache/restore@v4
+        id: cuda-cache
+        continue-on-error: true
+        with:
+          path: /tmp/yue2-cuda-ccache
+          key: yue2-cuda128-v1-${{ github.sha }}
+          restore-keys: yue2-cuda128-v1-
       - name: Configure portable CUDA engine
         run: >-
           cmake -S . -B build-cantor -G Ninja -DCMAKE_BUILD_TYPE=Release
           -DGGML_BACKEND_DL=ON -DGGML_NATIVE=OFF -DGGML_CPU_ALL_VARIANTS=ON
           -DGGML_OPENMP=OFF -DGGML_CUDA=ON -DGGML_CUDA_NCCL=OFF
+          -DCMAKE_CUDA_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
           '-DCMAKE_CUDA_ARCHITECTURES=75-virtual;80-virtual;86-real'
       - name: Build and test ABI without GPU hardware
         run: |
@@ -132,6 +149,12 @@ jobs:
           name: yue2-engine-linux-cuda12-x86_64
           path: dist/*
           if-no-files-found: error
+      - uses: actions/cache/save@v4
+        if: always() && steps.cuda-cache.outputs.cache-hit != 'true'
+        continue-on-error: true
+        with:
+          path: /tmp/yue2-cuda-ccache
+          key: yue2-cuda128-v1-${{ github.sha }}
   release:
     name: Publish commit-pinned archives
     if: github.event_name == 'workflow_dispatch' && inputs.publish_release
