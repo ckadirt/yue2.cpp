@@ -11,8 +11,11 @@ that file from its ACE-Step packages only. The shared catalog in PR #6 includes
 the new macOS 14-targeted YuE2 archives, but that default release asset does not
 automatically incorporate them.
 
-An operator can already select the shared backend manifest with the existing
-`backends_url` configuration. A proposed default-path fix is to extend
+An operator can select a custom manifest with the existing `backends_url`
+configuration. The shared manifest currently has YuE2's Mac entries but lacks
+ACE-Step's Mac release entries; switching to it would omit fresh ACE-Step Mac
+installation. A combined manifest must preserve both families. The proposed
+default-path fix is to extend
 `.github/workflows/release.yml` in **Cantor**, merging the shared manifest's
 macOS entries with that release's freshly built ACE-Step entries. Validate
 family/OS/architecture/backend identities and preserve ACE-Step availability.

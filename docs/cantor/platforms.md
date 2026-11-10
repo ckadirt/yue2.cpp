@@ -37,9 +37,11 @@ library loading do not establish song generation or performance on a GPU.
 
 - Released macOS nodes read a GitHub-release-specific backend manifest by
   default. The shared manifest in PR #6 contains the new macOS engines;
-  operators can select it through the existing setting
-  `backends_url = "https://relay.cantorfm.com/backends/v1.json"`. Default
-  release-manifest wiring was not changed under this model task.
+  the existing `backends_url` setting accepts custom manifests. The shared
+  manifest lacks ACE-Step's Mac release entries, so switching it wholesale
+  would omit fresh ACE-Step installation on Mac. The proposed combined
+  manifest must preserve both families. Default release-manifest wiring was
+  not changed under this model task; see [host gaps](host-gaps.md).
 - A Windows native engine DLL is not a Windows node release. Cantor's current
   node has no Windows DLL-loading path. Windows engine artifacts are available
   for development, but Windows is not advertised in the shared Cantor manifest.

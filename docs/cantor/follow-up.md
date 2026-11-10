@@ -142,3 +142,20 @@ quality. This is user listening feedback, not a formal blind evaluation.
   CUDA packaging and the native matrix genuinely pass; do not report the failed
   run as passing. All R2/catalog/real-node follow-up checks are already live and
   verified. No remote compute needs restarting to finish GitHub CI.
+
+## 2026-11-10 00:53 UTC — ownership preflight confirmed; final cold build running
+
+- Corrected full matrix run **42729246878**, source
+  **57692e2cca8fa7a3eaf3bebff680db77457be179**:
+  https://github.com/ckadirt/yue2.cpp/actions/runs/42729246878.
+- The CUDA job **129542744211** passed exact-commit/clean-checkout Git
+  preflight and cache restore setup before starting compilation. The first
+  run with the new cache is cold; it cannot reuse the earlier discarded build.
+- All eight other native targets passed again. Remaining: CUDA build/test,
+  packaging, archive upload. No claim of full matrix success until observed.
+- The R2 rollout is live and all four public manifests were verified; compute
+  remains stopped. No new instance or GPU is needed to monitor this job.
+- Clarified the Mac manifest caveat: the current shared manifest has YuE2 Mac
+  entries but lacks ACE-Step's release-built Mac entries. A default switch
+  must preserve both families; that host/release wiring remains unimplemented
+  and awaits approval.
