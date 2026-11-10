@@ -393,3 +393,9 @@
   The original ignored evidence files remain intact.
 - No allocation restarted. The previous GPU stopped successfully at about
   **22:10 UTC**; `session.json` records the observed stop.
+
+## Distribution/platform follow-up complete
+
+See [the follow-up log](follow-up.md) for the R2 rollout, all-preset fresh
+Node pulls, native nine-target CI success, and observed compute shutdown.
+Host changes in [host-gaps.md](host-gaps.md) remain unimplemented pending approval.

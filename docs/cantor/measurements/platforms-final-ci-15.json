@@ -1,0 +1,136 @@
+{
+  "workflow_run": "https://github.com/ckadirt/yue2.cpp/actions/runs/42729246878",
+  "source_commit": "57692e2cca8fa7a3eaf3bebff680db77457be179",
+  "conclusion": "success",
+  "checked_utc": "2026-11-10 01:17:36 UTC",
+  "native_targets_passed": 9,
+  "jobs": [
+    {
+      "id": 129542744211,
+      "name": "linux / x86_64 / cuda12",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/ckadirt/yue2.cpp/actions/runs/42729246878/job/129542744211"
+    },
+    {
+      "id": 129542744464,
+      "name": "linux / x86_64 / vulkan",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/ckadirt/yue2.cpp/actions/runs/42729246878/job/129542744464"
+    },
+    {
+      "id": 129542744634,
+      "name": "windows / x86_64 / vulkan",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/ckadirt/yue2.cpp/actions/runs/42729246878/job/129542744634"
+    },
+    {
+      "id": 129542744643,
+      "name": "macos / arm64 / cpu",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/ckadirt/yue2.cpp/actions/runs/42729246878/job/129542744643"
+    },
+    {
+      "id": 129542744645,
+      "name": "macos / x86_64 / cpu",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/ckadirt/yue2.cpp/actions/runs/42729246878/job/129542744645"
+    },
+    {
+      "id": 129542744678,
+      "name": "macos / arm64 / metal",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/ckadirt/yue2.cpp/actions/runs/42729246878/job/129542744678"
+    },
+    {
+      "id": 129542744684,
+      "name": "windows / x86_64 / cpu",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/ckadirt/yue2.cpp/actions/runs/42729246878/job/129542744684"
+    },
+    {
+      "id": 129542744769,
+      "name": "linux / arm64 / cpu",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/ckadirt/yue2.cpp/actions/runs/42729246878/job/129542744769"
+    },
+    {
+      "id": 129542745056,
+      "name": "linux / x86_64 / cpu",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/ckadirt/yue2.cpp/actions/runs/42729246878/job/129542745056"
+    },
+    {
+      "id": 129560217155,
+      "name": "Publish commit-pinned archives",
+      "status": "completed",
+      "conclusion": "skipped",
+      "url": "https://github.com/ckadirt/yue2.cpp/actions/runs/42729246878/job/129560217155"
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 13725439430,
+      "name": "yue2-engine-linux-cuda12-x86_64",
+      "bytes": 72799002,
+      "expired": false
+    },
+    {
+      "id": 13724905308,
+      "name": "yue2-engine-linux-cpu-x86_64",
+      "bytes": 7711548,
+      "expired": false
+    },
+    {
+      "id": 13724715401,
+      "name": "yue2-engine-macos-cpu-x86_64",
+      "bytes": 1856826,
+      "expired": false
+    },
+    {
+      "id": 13724671168,
+      "name": "yue2-engine-linux-vulkan-x86_64",
+      "bytes": 20025231,
+      "expired": false
+    },
+    {
+      "id": 13724451310,
+      "name": "yue2-engine-windows-vulkan-x86_64",
+      "bytes": 12946148,
+      "expired": false
+    },
+    {
+      "id": 13724380924,
+      "name": "yue2-engine-windows-cpu-x86_64",
+      "bytes": 911286,
+      "expired": false
+    },
+    {
+      "id": 13724121140,
+      "name": "yue2-engine-macos-cpu-arm64",
+      "bytes": 1624968,
+      "expired": false
+    },
+    {
+      "id": 13722939187,
+      "name": "yue2-engine-macos-metal-arm64",
+      "bytes": 2658510,
+      "expired": false
+    },
+    {
+      "id": 13722804933,
+      "name": "yue2-engine-linux-cpu-arm64",
+      "bytes": 1826476,
+      "expired": false
+    }
+  ],
+  "scope": "Build, real C ABI/checkpoint tests, archive packaging and relocation checks. No new-platform song-generation claim."
+}

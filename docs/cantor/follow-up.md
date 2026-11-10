@@ -159,3 +159,26 @@ quality. This is user listening feedback, not a formal blind evaluation.
   entries but lacks ACE-Step's release-built Mac entries. A default switch
   must preserve both families; that host/release wiring remains unimplemented
   and awaits approval.
+
+## 2026-11-10 01:17 UTC — all authorized work completed
+
+- Final native matrix **42729246878**, source
+  **57692e2cca8fa7a3eaf3bebff680db77457be179**, finished **successfully**.
+  All nine native targets passed; nine non-expired package artifacts exist.
+  The optional manual-release job was correctly skipped on this push.
+- CUDA compilation, both ABI/checkpoint tests, relocated archive packaging,
+  artifact upload and compiler-cache save all passed. The trusted-checkout
+  correction resolved the observed failure without weakening provenance checks.
+- Saved `measurements/platforms-final-ci-15.json`, containing exact run/source,
+  native job results and artifact IDs. The source/ABI checks do not claim
+  full song generation on every new platform or accelerator.
+- R2 weights, source notices, public hash/range checks, all-preset fresh real-node
+  pulls, catalog merge/deployment and both-domain live checks are complete.
+  Existing A10G-tested CUDA/CPU archives remain selected for Linux x86_64.
+- All Modal compute remains stopped; the original persistent volume and local
+  logs/samples are retained. No new instance or GPU is needed.
+- Windows node implementation, combined default macOS release-manifest wiring,
+  and recording-input/covers integration remain flagged proposals in
+  `host-gaps.md`; none was silently implemented. They require user approval
+  before further work. Automatic lyric writing is not a built-in supported
+  YuE2 task; supplied lyrics remain the current generation input.

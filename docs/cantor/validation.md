@@ -11,6 +11,10 @@ All three preset pulls from an empty real-node store also passed using public
 R2 weights/engine URLs: [fresh-pull receipt](measurements/node-r2-pull-11.json).
 These follow-up checks did not rerun generation; original generation evidence
 below remains explicitly scoped to its tested builds and hardware.
+All nine native build/ABI/package targets also passed in the final
+[CI run](https://github.com/ckadirt/yue2.cpp/actions/runs/42729246878);
+[receipt](measurements/platforms-final-ci-15.json). No remote compute remains
+allocated for this task.
 
 Updated 2026-11-09. Final CPU/CUDA engine validation passed; immutable archives
 are published and publicly hash-verified. [Cantor PR #5](https://github.com/ckadirt/Cantor/pull/5)

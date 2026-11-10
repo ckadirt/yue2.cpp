@@ -3,13 +3,16 @@
 This follow-up adds native build/ABI/package checks and public engine archives.
 PR #6 is merged and deployed; both public domains matched the reviewed
 manifests on 2026-11-10 at 00:12:06 UTC.
+The final [native matrix](https://github.com/ckadirt/yue2.cpp/actions/runs/42729246878)
+passed **all nine targets**, including CUDA archive packaging and upload.
+[Final CI receipt](measurements/platforms-final-ci-15.json).
 It does not claim model generation on every OS or accelerator. Existing A10G
 generation and Linux CPU short-generation evidence remains in [validation](validation.md).
 
 | Platform/backend | Build, ABI, checkpoint and relocation result | Distribution |
 |---|---|---|
 | Linux x86_64 CPU | Passed | Existing generation-checked `25455ed8a916` stays in catalog |
-| Linux x86_64 CUDA 12 | Existing archive generation-tested on A10G; new hosted CI build in progress | Existing `25455ed8a916` stays in catalog |
+| Linux x86_64 CUDA 12 | Existing archive generation-tested on A10G; hosted compile, ABI tests, packaging and upload also passed | Existing `25455ed8a916` stays in catalog |
 | Linux ARM64 CPU | Passed on native ARM runner | R2 `d43af5015d85`; live through PR #6 |
 | Linux x86_64 Vulkan | Passed | R2 `7fd3f2455e86`; live through PR #6 |
 | macOS Intel CPU | Passed; every packaged library targets at most macOS 14.0 | R2 `9061e660d79b`; live through PR #6 |
