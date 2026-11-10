@@ -14,7 +14,7 @@ revision `e630f2b8f6aedf8254c3186438633c1b5eeaf80a`.
 All five evaluated generation GGUFs are now mirrored under
 `https://ckpts.cantorfm.com/yue2-1.0/`, preserving their exact identities and
 source notices. [Public source/hash manifest](https://ckpts.cantorfm.com/yue2-1.0/manifest.json).
-The catalog URL change is in [PR #6](https://github.com/ckadirt/Cantor/pull/6).
+The catalog URL change is live through [PR #6](https://github.com/ckadirt/Cantor/pull/6).
 
 | Component | Existing choices | Notes |
 |---|---|---|

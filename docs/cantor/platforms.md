@@ -1,6 +1,8 @@
 # Native engine platform delivery
 
 This follow-up adds native build/ABI/package checks and public engine archives.
+PR #6 is merged and deployed; both public domains matched the reviewed
+manifests on 2026-11-10 at 00:12:06 UTC.
 It does not claim model generation on every OS or accelerator. Existing A10G
 generation and Linux CPU short-generation evidence remains in [validation](validation.md).
 
@@ -8,11 +10,11 @@ generation and Linux CPU short-generation evidence remains in [validation](valid
 |---|---|---|
 | Linux x86_64 CPU | Passed | Existing generation-checked `25455ed8a916` stays in catalog |
 | Linux x86_64 CUDA 12 | Existing archive generation-tested on A10G; new hosted CI build in progress | Existing `25455ed8a916` stays in catalog |
-| Linux ARM64 CPU | Passed on native ARM runner | R2 `d43af5015d85`; proposed in PR #6 |
-| Linux x86_64 Vulkan | Passed | R2 `7fd3f2455e86`; proposed in PR #6 |
-| macOS Intel CPU | Passed; every packaged library targets at most macOS 14.0 | R2 `9061e660d79b`; proposed in PR #6 |
-| macOS Apple Silicon CPU | Passed; every packaged library targets at most macOS 14.0 | R2 `9061e660d79b`; proposed in PR #6 |
-| macOS Apple Silicon Metal | Passed, including selected plugin load and minimum OS check | R2 `9061e660d79b`; proposed in PR #6 |
+| Linux ARM64 CPU | Passed on native ARM runner | R2 `d43af5015d85`; live through PR #6 |
+| Linux x86_64 Vulkan | Passed | R2 `7fd3f2455e86`; live through PR #6 |
+| macOS Intel CPU | Passed; every packaged library targets at most macOS 14.0 | R2 `9061e660d79b`; live through PR #6 |
+| macOS Apple Silicon CPU | Passed; every packaged library targets at most macOS 14.0 | R2 `9061e660d79b`; live through PR #6 |
+| macOS Apple Silicon Metal | Passed, including selected plugin load and minimum OS check | R2 `9061e660d79b`; live through PR #6 |
 | Windows x86_64 CPU | Passed, including DLL relocation and CPU dispatch | R2 `d43af5015d85`; engine archive only |
 | Windows x86_64 Vulkan | Passed with the standard Vulkan loader prerequisite | R2 `4800780c7bd9`; engine archive only |
 

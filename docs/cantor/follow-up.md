@@ -102,3 +102,25 @@ quality. This is user listening feedback, not a formal blind evaluation.
 - CPU sandbox **sb-01M7197YE2XRAKHFB7WXES6JAF** still runs; hard three-hour
   timeout, conservative stop target **02:10:03 UTC**. No GPU allocated. Stop
   early once persistent/local recovery records are safe and remote work ends.
+
+## 2026-11-10 00:12 UTC — R2 distribution live; compute stopped
+
+- PR #6 merged as **89c3fdfbee1580f9317ede41864debcd51d5340d** after all
+  checks on exact head **6e1f4befea49d2f4c0f5c16b67371da42881761a** passed:
+  https://github.com/ckadirt/Cantor/actions/runs/42723113240.
+- Both deployments passed: relay
+  https://github.com/ckadirt/Cantor/actions/runs/42726164628 and site
+  https://github.com/ckadirt/Cantor/actions/runs/42726164314.
+- All four live JSON endpoints on `cantorfm.com` and `relay.cantorfm.com`
+  exactly matched reviewed files at **00:12:06 UTC**. Receipts:
+  `measurements/live-r2-site-14.json` and `live-r2-relay-14.json`.
+- CPU sandbox was synced and terminated, observed **23:59:29 UTC**. No GPU was
+  started for this follow-up. `cpu-session.json` is marked stopped. Persistent
+  source checkout was fast-forwarded to pushed commit **3da00db** before stop;
+  later report updates are on GitHub and can be fetched without rebuilding.
+- Native pipeline still has one hosted CUDA compile in progress. Eight other
+  targets passed. Deployment uses the original generation-tested CUDA archive,
+  so no unverified build was promoted. Continue monitoring run **42722149204**;
+  do not claim that last build passed until its final result is observed.
+- No remote compute needs restarting to finish CI monitoring or report updates.
+  Host changes proposed in `host-gaps.md` remain unimplemented pending approval.

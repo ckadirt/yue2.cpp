@@ -1,5 +1,17 @@
 # YuE2 validation evidence
 
+Distribution follow-up: [PR #6](https://github.com/ckadirt/Cantor/pull/6) merged
+as `89c3fdfbee1580f9317ede41864debcd51d5340d`. Both site and relay deployments
+passed, and all four live manifests matched the reviewed R2/platform data at
+**2026-11-10 00:12:06 UTC**. Receipts:
+[primary site](measurements/live-r2-site-14.json),
+[relay](measurements/live-r2-relay-14.json).
+
+All three preset pulls from an empty real-node store also passed using public
+R2 weights/engine URLs: [fresh-pull receipt](measurements/node-r2-pull-11.json).
+These follow-up checks did not rerun generation; original generation evidence
+below remains explicitly scoped to its tested builds and hardware.
+
 Updated 2026-11-09. Final CPU/CUDA engine validation passed; immutable archives
 are published and publicly hash-verified. [Cantor PR #5](https://github.com/ckadirt/Cantor/pull/5)
 merged as `841fcea11cdf4316feaf02037daf891c21fdd6e2`; deployment passed and both
@@ -146,14 +158,16 @@ mirrored **all five evaluated generation GGUFs** to
 a provenance manifest. Complete public bodies and HTTP byte-range probes
 passed. [Weight publication receipt](measurements/weights-published-08.json).
 The catalog switch and additional validated native engine registrations are
-in [PR #6](https://github.com/ckadirt/Cantor/pull/6); see the
+live through [PR #6](https://github.com/ckadirt/Cantor/pull/6); see the
 [platform report](platforms.md) for OS coverage and host constraints.
 
 The catalog exposes steps, guidance, and automatic score mode. Supplied ABC
 remains a native-API feature: the current shared app text-extension contract
 rejects newlines. Recording covers, singer references, and automatic lyric
-writing are not advertised. Initial distributed targets are Linux x86_64 CPU
-and CUDA 12. No macOS, Vulkan, or Windows engine is declared.
+writing are not advertised. Initial distributed targets were Linux x86_64 CPU
+and CUDA 12. The follow-up shared manifest also declares Linux ARM64 CPU,
+Linux Vulkan, and macOS CPU/Metal. Windows native engine archives are published
+for development; Windows node support remains a separate unimplemented task.
 
 Registration CI passed all jobs after the retired macOS 14 runner was moved to
 macOS 15. [Registration CI](https://github.com/ckadirt/Cantor/actions/runs/42705072014)
@@ -162,6 +176,6 @@ The [live verification receipt](measurements/live-verification.json) checks both
 public manifests against the reviewed files, including all existing entries.
 
 For the exact boundary of node testing, CI coverage, RAM measurements, and
-distribution, see the [delivery audit](delivery-audit.md). The node test used
+distribution, see the [delivery audit](delivery-audit.md). The initial node test used
 Balanced/CUDA with two steps, loopback manifests, and pre-seeded model blobs;
 it was not a clean public-download test of every preset and platform.

@@ -9,10 +9,11 @@ from urllib.request import Request, urlopen
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--repo', type=Path, required=True)
 parser.add_argument('--output', type=Path, required=True)
+parser.add_argument('--base-url', default='https://relay.cantorfm.com')
 args = parser.parse_args()
 records = {}
 for kind, collection in [('catalog', 'models'), ('backends', 'engines')]:
-    url = f'https://relay.cantorfm.com/{kind}/v1.json'
+    url = f"{args.base_url.rstrip('/')}/{kind}/v1.json"
     expected = json.loads((args.repo / f'relay/public/{kind}/v1.json').read_text())
     for attempt in range(6):
         request = Request(url, headers={'User-Agent': 'cantor/0.2.10', 'Cache-Control': 'no-cache'})

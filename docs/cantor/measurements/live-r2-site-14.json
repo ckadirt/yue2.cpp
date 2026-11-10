@@ -1,0 +1,13 @@
+{
+  "catalog": {
+    "url": "https://cantorfm.com/catalog/v1.json",
+    "matches_reviewed_manifest": true,
+    "entries": 4
+  },
+  "backends": {
+    "url": "https://cantorfm.com/backends/v1.json",
+    "matches_reviewed_manifest": true,
+    "entries": 4
+  },
+  "checked_utc": "2026-11-10T00:12:06.419233+00:00"
+}
